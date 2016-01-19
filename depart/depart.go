@@ -11,7 +11,6 @@
 package depart
 
 import (
-	"time"
 )
 
 // La structure DepartLegal regroupe les données légales de départ à la retraite.
@@ -35,7 +34,7 @@ func CalculerDepartLegal(input string) (*DepartLegal, error) {
 	}
 
 	var res DepartLegal
-	res.TrimestresRequis, err = CalculerTrimestres(dateNaissance)
+	res.TrimestresRequis, err = RechercherTrimestre(dateNaissance)
 	if err != nil {
 		return nil, err
 	}
@@ -43,16 +42,3 @@ func CalculerDepartLegal(input string) (*DepartLegal, error) {
 	return &res, nil
 }
 
-
-func CalculerTrimestres(d time.Time) (int, error) {
-	if d.IsZero() {
-		return 0, ErrAppelFonctionIncorrect
-	}
-
-	trimestres, err := CalculerTrimestres(d)
-	if err != nil {
-		return 0, err
-	}
-
-	return trimestres, nil
-}
