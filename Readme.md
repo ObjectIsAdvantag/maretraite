@@ -1,7 +1,16 @@
 
 # Que trouverez-vous ici ?
 
-Quelques outils qui vous permettront de vous éclairer quant à votre future retraite, exposés sous forme d'API
+Quelques outils qui vous permettront de vous éclairer quant à votre future retraite, 
+si vous êtes dans le cas d'un salarié du privé qui a cotisé au régime général
+développés en #golang, et exposables sous forme d'API
+
+## Calcul des données de départ en retraite
+
+
+## Calcul du montant de sa cosition retraite
+ 
+Voir https://www.lassuranceretraite.fr/portail-info/home/salaries/age-et-montant-de-ma-retraite/quel-sera-montant-ma-retraite/le-calcul-en-detail.html
 
 
 # Pourquoi ?
@@ -15,14 +24,14 @@ Bref, c'est le moment d'apporter my 2 euros...
 
 # Recherches
 
-## Sites pertinents
+## Sites
 
 - l'assurance retraite : [Calculer](https://www.lassuranceretraite.fr/portail-info/home/salaries/calculer-mon-age-de-depart.html#) mon age de départ à la retraite  
 
 
-## Repos pertinents (à creuser)
+## Repos Github
 
-[sgmap](https://github.com/sgmap/retraite)
+- [sgmap](https://github.com/sgmap/retraite)
 Code d'un site présentant des démarches personnalisées de départ à la retraite
 Le code a été crée par [@xnpore](https://twitter.com/xnopre), pour le compte d'un client probablement. 
 Quelques datas peuvent pertinentes à ré-exposer sous forme d'API, à creuser...
@@ -30,7 +39,11 @@ Quelques datas peuvent pertinentes à ré-exposer sous forme d'API, à creuser...
    - départ légal : https://github.com/sgmap/retraite/blob/master/server/db/evolutions/12.sql
 
 
+# License
 
+MIT, see license file.
+
+Feel free to use, reuse, extend, and contribute
 
 
 

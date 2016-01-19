@@ -11,16 +11,11 @@
 package depart
 
 import (
-	"errors"
 	"time"
 )
 
-var ErrDateVide = errors.New("la date n'est pas renseignée")
-var ErrDateFormatInvalide = errors.New("le format de date n'est pas valide")
-var ErrDateLimites = errors.New("la date n'est pas entre le 01/01/1900 et aujourd'hui")
-
-const JJMMAAADateFormat = "2/1/2006"
-
+// La structure DepartLegal regroupe les données légales de départ à la retraite.
+// Cette structure est calculée à partir d'une date de naissance, voir la fonction CalculerDepartLegal
 type DepartLegal struct {
 	TrimestresRequis	int		`json:"nombreDeTrimestresRequis"`	// nombre de trimestres afin de disposer de sa retraite à taux plein
 	AgeLegalMin   		int		`json:"ageLegalMinimum"`// âge à partir duquel il est possible de percevoir une retraite, mais elle ne sera pas à taux plein si le nombre de trimestres cotisés n'est pas celui requis
@@ -46,26 +41,11 @@ func CalculerDepartLegal(input string) (*DepartLegal, error) {
 }
 
 
-func parseDate(input string) (time.Time, error) {
-	if input == "" {
-		return time.Time{}, ErrDateVide
-	}
-
-	// Parser la date
-	res, err := time.Parse(JJMMAAADateFormat, input)
-	if err != nil {
-		return time.Time{}, ErrDateFormatInvalide
-	}
-
-	// Vérifier que la date est bien entre le 1/1/1900 et aujourd'hui
-	min, _ := time.Parse(JJMMAAADateFormat, "01/01/1900")
-	if res.Before(min) || res.After(time.Now()) {
-		return time.Time{}, ErrDateLimites
-	}
-
-	return res, nil
-}
-
 func CalculerTrimestres(d time.Time) (int, error) {
+	periode, err := GetPeriodeDepartEnRetraite(d)
+	if err != nil {
+		return err
+	}
+
 	return 171, nil
 }

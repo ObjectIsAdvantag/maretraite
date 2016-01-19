@@ -1,3 +1,6 @@
+// Copyright 2016, Stève Sfartz
+// Licensed under the MIT License
+
 package depart
 
 import (
