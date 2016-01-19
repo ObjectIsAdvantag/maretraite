@@ -8,9 +8,9 @@ import (
 )
 
 
-func TestDepartPourMoi(t *testing.T) {
-	born := "24/12/1971"
-	res, err := CalculerDepartLegal(born)
+func TestCalculerDepartLegalPourMoi(t *testing.T) {
+	naissance := "24/12/1971"
+	res, err := CalculerDepartLegal(naissance, 0)
 	if err != nil {
 		t.Errorf("impossible de calculer les informations de départ en retraite, error: %s", err)
 	}
@@ -18,6 +18,16 @@ func TestDepartPourMoi(t *testing.T) {
 	expTrimestres := 171
 	if res.TrimestresRequis != expTrimestres {
 		t.Errorf("erreur calcul des trimestres: %d contre %d attendus", res.TrimestresRequis, expTrimestres)
+	}
+
+	expAgeDepartMin := AgeEnAnneesMois{Annees:62, Mois:0}
+	if res.AgeDepartMin != expAgeDepartMin {
+		t.Errorf("erreur calcul de l'age de départ min: %v contre %v attendu", res.AgeDepartMin, expAgeDepartMin)
+	}
+
+	expAgeTauxPlein := AgeEnAnneesMois{Annees:67, Mois:0}
+	if res.AgeTauxPleinAuto != expAgeTauxPlein {
+		t.Errorf("erreur calcul de l'age du taux plein min: %v contre %v attendu", res.AgeTauxPleinAuto, expAgeDepartMin)
 	}
 }
 

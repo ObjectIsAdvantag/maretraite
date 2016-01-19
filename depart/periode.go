@@ -26,8 +26,8 @@ func (age AgeEnAnneesMois) EnAnnees() float32 {
 type PeriodeAgeLegal struct {
 	Depuis					time.Time			// date de naissance à partir de laquelle les âges de départs en retraite s'appliquent, vide s'il n'y a pas de borne inférieure
 	Jusque					time.Time			// date de naissance jusque laquelle les âges de départs en retraite s'appliquent, vide s'il n'y a pas de borne supérieure
-	AgeDepartLegal			AgeEnAnneesMois		// age minimal à partir duquel on peut percevoir sa retraite
-	AgeTauxPlein			AgeEnAnneesMois		// age à partir duquel on percevra sa retraite à taux plein même si le nombre de trimestre cotisés n'est pas suffisant
+	AgeDepartMin			AgeEnAnneesMois		// age minimal à partir duquel on peut percevoir sa retraite
+	AgeTauxPleinAuto			AgeEnAnneesMois	// age à partir duquel on percevra sa retraite à taux plein même si le nombre de trimestre cotisés n'est pas suffisant
 	AgeRetraiteForcee		AgeEnAnneesMois		// age à partir duquel un employeur peut exiger qu'un salarié prenne sa retraite même sans son consentement
 }
 
