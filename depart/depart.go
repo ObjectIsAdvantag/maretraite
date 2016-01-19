@@ -24,6 +24,9 @@ type DepartLegal struct {
 	DateDepartAuto		string	`json:"dateDepartAutomatique"`// date à partir de laquelle il est possible de percevoir une retraite à taux plein même si le nombre de trimestres cotisés n'est pas suffisant
 }
 
+const ANNEE_MIN = 1900
+const ANNEE_MAX = 2100
+
 // Calcul les informations de départ légale à la retraite, à partir d'une date de naissance au format JJ/MM/AAAA
 func CalculerDepartLegal(input string) (*DepartLegal, error) {
 	dateNaissance, err := parseDate(input)
@@ -42,10 +45,14 @@ func CalculerDepartLegal(input string) (*DepartLegal, error) {
 
 
 func CalculerTrimestres(d time.Time) (int, error) {
-	periode, err := GetPeriodeDepartEnRetraite(d)
-	if err != nil {
-		return err
+	if d.IsZero() {
+		return 0, ErrAppelFonctionIncorrect
 	}
 
-	return 171, nil
+	trimestres, err := CalculerTrimestres(d)
+	if err != nil {
+		return 0, err
+	}
+
+	return trimestres, nil
 }

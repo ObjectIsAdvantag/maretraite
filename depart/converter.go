@@ -5,10 +5,10 @@ package depart
 import (
 	"errors"
 	"time"
+	"fmt"
 )
 
 const JJMMAAADateFormat = "2/1/2006"
-
 
 var ErrDateVide = errors.New("la date n'est pas renseignée")
 var ErrDateFormatInvalide = errors.New("le format de date n'est pas valide")
@@ -27,7 +27,7 @@ func parseDate(input string) (time.Time, error) {
 	}
 
 	// Vérifier que la date est bien entre le 1/1/1900 et aujourd'hui
-	min, _ := time.Parse(JJMMAAADateFormat, "01/01/1900")
+	min, _ := time.Parse(JJMMAAADateFormat, fmt.Sprintf("01/01/%d", ANNEE_MIN))
 	if res.Before(min) || res.After(time.Now()) {
 		return time.Time{}, ErrDateLimites
 	}

@@ -16,11 +16,14 @@ type AgeEnAnneesMois struct {
 	Mois 		int		`json:"mois,omitempty"`			// nombre de mois
 }
 
+func (age AgeEnAnneesMois) EnAnnees() float32 {
+	return float32(age.Annees) + float32(age.Mois)/12
+}
+
 // Le type PeriodeDepartLegal représente l'age minimal de départ à la retraite.
 // Ce type est utilisé pour associer une période légale à une durée de naissance.
 // Exemple :  pour les personnes nées à partir du  01/01/1954, 61 ans et 7 mois pour l'âge minimum et 66 ans et 7 mois pour une retraite à taux plein
-
-type PeriodeDepartLegal struct {
+type PeriodeAgeLegal struct {
 	Depuis					time.Time			// date de naissance à partir de laquelle les âges de départs en retraite s'appliquent, vide s'il n'y a pas de borne inférieure
 	Jusque					time.Time			// date de naissance jusque laquelle les âges de départs en retraite s'appliquent, vide s'il n'y a pas de borne supérieure
 	AgeDepartLegal			AgeEnAnneesMois		// age minimal à partir duquel on peut percevoir sa retraite
@@ -31,32 +34,34 @@ type PeriodeDepartLegal struct {
 // Le type EntreeReferentiel est utilisé pour exposer l'ensemble du référentiel des périodes de départ à la retraite sous forme d'API
 type EntreeReferentiel struct {
 	NaissanceApres			string         		 // date de naissance à partir de laquelle s'applique la législation
-	Legislation				PeriodeDepartLegal
+	Legislation				PeriodeAgeLegal
 }
 
-//
+// Le type ReferentielPeriodeLegales regroupe les âges de départ en retraite.
+// Ce type permet d'abriter de futures données.
+// Par défaut, le référentiel de 2010 est chargé.
 type ReferentielPeriodeLegales struct {
 	nom 					string							// nom commun du référentiel
 	depuis					time.Time						// date depuis laquelle le référentiel est en vigueur
 	url 					string							// URL vers le référentiel ministériel
-	periodes 				map[time.Time]PeriodeDepartLegal
+	periodes 				map[time.Time]PeriodeAgeLegal
 }
 
 var ErrPeriodeNonTrouvee = errors.New("pas de période pour la date spécifiée")
 
-// Le référentiel par défaut, en vigueur en Janvier 2016
+// Le référentiel des âges de départ à la retraite en fonction de l'année de naissance, et tel qu'en vigueur en Janvier 2016
 // voir http://www.la-retraite-en-clair.fr/cid3190611/a-quel-age-peut-partir-la-retraite.html
-var ref ReferentielPeriodeLegales
+var refAgeLegal ReferentielPeriodeLegales
 
 func init() {
 	// Chargement du référentiel par défaut
-	ref.nom = "Réforme de 2010"
-	ref.depuis, _ = time.Parse(JJMMAAADateFormat, "01/01/2010") 	// TODO : A vérifier
-	ref.url = "http://www.la-retraite-en-clair.fr/cid3190611/a-quel-age-peut-partir-la-retraite.html"
-	ref.periodes = make(map[time.Time]PeriodeDepartLegal)
+	refAgeLegal.nom = "Réforme de 2010"
+	refAgeLegal.depuis, _ = time.Parse(JJMMAAADateFormat, "01/01/2010") 	// TODO : A vérifier
+	refAgeLegal.url = "http://www.la-retraite-en-clair.fr/cid3190611/a-quel-age-peut-partir-la-retraite.html"
+	refAgeLegal.periodes = make(map[time.Time]PeriodeAgeLegal)
 
 	// TODO ajouter les périodes avant
-	ref.ajouterPeriode("01/01/1955", "", AgeEnAnneesMois{62,0}, AgeEnAnneesMois{67,0},  AgeEnAnneesMois{70,0})
+	refAgeLegal.ajouterPeriode("01/01/1955", "", AgeEnAnneesMois{62,0}, AgeEnAnneesMois{67,0},  AgeEnAnneesMois{70,0})
 }
 
 // Ajoute une période au référentiel.
@@ -83,23 +88,23 @@ func (r *ReferentielPeriodeLegales) ajouterPeriode(depuis string, jusque string,
 		}
 	}
 
-	ref.periodes[from] = PeriodeDepartLegal{from, to, ageMinimal, ageAuTauxPlein, ageRetraiteForcee}
+	refAgeLegal.periodes[from] = PeriodeAgeLegal{from, to, ageMinimal, ageAuTauxPlein, ageRetraiteForcee}
 	return nil
 }
 
 // Retourne les périodes de départ en retraite pour une personne née à la date spécifiée
-func GetPeriodeDepartEnRetraite(néLe time.Time) (PeriodeDepartLegal, error) {
-	for _, periode := range ref.periodes {
-		if dateDansLaPeriode(néLe, periode.Depuis, periode.Jusque) {
+func RechercherAgeLegal(néLe time.Time) (PeriodeAgeLegal, error) {
+	for _, periode := range refAgeLegal.periodes {
+		if estDateDansLaPeriode(néLe, periode.Depuis, periode.Jusque) {
 			return periode, nil
 		}
 	}
-	return PeriodeDepartLegal{}, ErrPeriodeNonTrouvee
+	return PeriodeAgeLegal{}, ErrPeriodeNonTrouvee
 }
 
 // Vérifie si la date spécifiée est dans l'intervalle demandé,
 // sachant que la borne min ou max peuvent être égale à zéro (cas où il n'y a de limite inf ou sup)
-func dateDansLaPeriode(date time.Time, depuis time.Time, jusque time.Time) bool {
+func estDateDansLaPeriode(date time.Time, depuis time.Time, jusque time.Time) bool {
 	if depuis.IsZero() {
 		return date.Before(jusque)
 	}
