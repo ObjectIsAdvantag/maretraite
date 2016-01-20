@@ -1,3 +1,11 @@
+// Copyright 2016, Stève Sfartz
+// Licensed under the MIT License
+
+// Ensemble de fonctions utilitaires pour manipuler des dates et âges
+//
+// Le type AnneesMoisJours permet d'exprimer des dates et âges en Années, Mois et Jour,
+// Le type AnneesMoisJours peut être converti en type time.Time (UTC) et vice versa.
+// Enfin, il est possible d'obtenir une durée en AnneesMoisJours à partir de la différence entre 2 dates.
 package depart
 
 
@@ -14,10 +22,18 @@ type AnneesMoisJours struct {
 	Jours 		int 	`json:"jours,omitempty"`		// nombre de jours
 }
 
+// Retourne la valeur en années
 func (amj AnneesMoisJours) EnAnnees() float32 {
-	return float32(amj.Annees) + float32(amj.Mois)/12
+	return float32(amj.Annees) + float32(amj.Mois)/12 + float32(amj.Jours/365)
 }
 
+// Retourne la valeur en mois
+func (amj AnneesMoisJours) EnMois() float32 {
+	return float32(amj.Annees*12) + float32(amj.Mois) + float32(amj.Jours/365*12)
+}
+
+
+// Crée un nouvel objet de type time.Time pour l' AnneesMoisJours spécifié
 func AnneesMoisJourToTime(amj AnneesMoisJours) (time.Time, error) {
 	if amj.Annees < 0 || amj.Annees > 2100 {
 		return time.Time{}, ErrDateFormatInvalide
@@ -32,6 +48,7 @@ func AnneesMoisJourToTime(amj AnneesMoisJours) (time.Time, error) {
 	return time.Date(amj.Annees, time.Month(amj.Mois), amj.Jours, 0, 0, 0, 0, time.UTC), nil
 }
 
+// Crée un nouvel objet de type AnneesMoisJours pour la date spécifiée
 func TimeToAnneesMoisJour(t time.Time) (AnneesMoisJours, error) {
 	if t.IsZero() {
 		return AnneesMoisJours{}, ErrDateFormatInvalide
@@ -40,8 +57,8 @@ func TimeToAnneesMoisJour(t time.Time) (AnneesMoisJours, error) {
 	return AnneesMoisJours{t.Year(), int(t.Month()), t.Day()}, nil
 }
 
-
-func CalculerAge(depuis time.Time, jusque time.Time) (AnneesMoisJours, error) {
+// Cette fonction calcule une durée au format AnneesMoisJour, en tenant compte du calendrier réel pour les dates comparées
+func CalculerDurée(depuis time.Time, jusque time.Time) (AnneesMoisJours, error) {
 
 	if jusque.Before(depuis) {
 		return AnneesMoisJours{}, fmt.Errorf("la date de fin:%s se situe avant la date de début: %s", jusque, depuis)
@@ -55,13 +72,12 @@ func CalculerAge(depuis time.Time, jusque time.Time) (AnneesMoisJours, error) {
 	// - si c'est le cas, revenir 1 an en arrière,
 	// - mémoriser l'année cible, le bond réalisé en année, et le fait qu'on a dû ou non s'arrêter un an avant
 	//
-	//
-	// 2. Se rendre sur le mois cible candidat et voir si on a dépassé
-	// - si ce n'est pas le cas
-	// - si c'est le cas, tenir qu'on doit opérer un changement de mois
+	// 2. Se rendre sur le mois cible candidat et calculer la différence de jours
+	// - si elle est positive, ne rien faire, on peut réaliser l'opération
+	// - si elle est négative, il faut opérer un changement de mois (avec le cas particulier du mois de janvier qui se transforme en décembre)
 	// - mémoriser le mois cible et calculer le bond réalisé en mois
 	//
-	// 3. Se rendre sur le mois cible, et calculer la différence en seconde entre les 2 dates
+	// 3. Se rendre sur l'année et mois cible, et calculer la différence en seconde entre les 2 dates
 	// - convertir cette différence en jours
 
 	// 1.
@@ -98,7 +114,6 @@ func CalculerAge(depuis time.Time, jusque time.Time) (AnneesMoisJours, error) {
 		Mois:moisCible,
 		Jours:depuis.Day(),
 	})
-
 	deltaJours := jusque.Sub(tempDateCible).Minutes()/60/24
 
 	return AnneesMoisJours{

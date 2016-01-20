@@ -1,3 +1,6 @@
+// Copyright 2016, Stève Sfartz
+// Licensed under the MIT License
+
 package depart
 
 import (
@@ -10,7 +13,7 @@ func Test1(t *testing.T) {
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 1, 20})
 
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
@@ -26,7 +29,7 @@ func Test2(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1971, 12, 24})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 1, 20})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -42,7 +45,7 @@ func Test3(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1971, 12, 24})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 1, 25})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -57,7 +60,7 @@ func Test4(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1971, 12, 24})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 1, 31})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -72,7 +75,7 @@ func Test5(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1971, 12, 24})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2015, 12, 31})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -87,7 +90,7 @@ func Test6(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1971, 12, 24})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 1, 1})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -102,7 +105,7 @@ func Test7(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 7, 4})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -117,7 +120,7 @@ func Test8(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 8, 4})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -132,7 +135,7 @@ func Test9(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 7, 20})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -148,7 +151,7 @@ func Test10(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 8, 20})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -163,7 +166,7 @@ func Test10b(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 12, 20})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -178,7 +181,7 @@ func Test10c(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 12, 31})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -193,7 +196,7 @@ func Test10d(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2017, 1, 1})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -208,7 +211,7 @@ func Test10e(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2017, 1, 2})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -223,7 +226,7 @@ func Test10f(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2017, 1, 3})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -238,7 +241,7 @@ func Test10g(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2017, 1, 4})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -253,7 +256,7 @@ func Test11(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 1, 4})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -269,7 +272,7 @@ func Test12(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 1, 5})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -284,7 +287,7 @@ func Test13(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 1, 3})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -299,7 +302,7 @@ func Test14(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 2, 4})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -314,7 +317,7 @@ func Test15(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 2, 3})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
@@ -329,7 +332,7 @@ func Test16(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 2, 2})
 
-	age, err := CalculerAge(depuis, jusque)
+	age, err := CalculerDurée(depuis, jusque)
 	if err != nil {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
