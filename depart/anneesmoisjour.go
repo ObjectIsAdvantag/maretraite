@@ -18,48 +18,92 @@ func (amj AnneesMoisJours) EnAnnees() float32 {
 	return float32(amj.Annees) + float32(amj.Mois)/12
 }
 
-func GetTime(annees int, mois int, jour int) (time.Time, error) {
-	if annees < 0 || annees > 2100 || mois < 1 || mois > 12 || jour < 1 || jour > 32 {
+func AnneesMoisJourToTime(amj AnneesMoisJours) (time.Time, error) {
+	if amj.Annees < 0 || amj.Annees > 2100 {
+		return time.Time{}, ErrDateFormatInvalide
+	}
+	if amj.Mois < 1 || amj.Mois > 12 {
+		return time.Time{}, ErrDateFormatInvalide
+	}
+	if amj.Jours < 1 || amj.Jours > 32 {
 		return time.Time{}, ErrDateFormatInvalide
 	}
 
-	return time.Date(annees, time.Month(mois), jour, 0, 0, 0, 0, time.UTC), nil
+	return time.Date(amj.Annees, time.Month(amj.Mois), amj.Jours, 0, 0, 0, 0, time.UTC), nil
 }
 
+func TimeToAnneesMoisJour(t time.Time) (AnneesMoisJours, error) {
+	if t.IsZero() {
+		return AnneesMoisJours{}, ErrDateFormatInvalide
+	}
 
+	return AnneesMoisJours{t.Year(), int(t.Month()), t.Day()}, nil
+}
 
 
 func CalculerAge(depuis time.Time, jusque time.Time) (AnneesMoisJours, error) {
 
 	if jusque.Before(depuis) {
-		return AnneesMoisJours{}, fmt.Errorf("la date de fin:%s est avant la date de début: %s", jusque, depuis)
+		return AnneesMoisJours{}, fmt.Errorf("la date de fin:%s se situe avant la date de début: %s", jusque, depuis)
 	}
-
-	//
 
 	// Formule de calcul de l'age en année / mois
 	// soient AAAA2/MM2/DD2 - AAAA1/MM1/DD1
 	//
-	// 1. Calculer si un ajustement est nécessaire en fonction de l'écart de jour
-	// AAAA3/MM3/DD1 = AAAA2/MM2/DD2 - 1 mois
-	// ECART_EN_JOUR = AAAA3/MM2/DD2 - AAAA3/MM3/DD1
-	// IF ECART_EN_JOUR > 15 THEN ADJUST_MONTH = -1 ELSE ADJUST_MONTH = 0
+	// 1. Se rendre à l'année cible et voir si on a dépassé
+	// - si ce n'est pas le cas, ok
+	// - si c'est le cas, revenir 1 an en arrière,
+	// - mémoriser l'année cible, le bond réalisé en année, et le fait qu'on a dû ou non s'arrêter un an avant
 	//
-	// 2. Calculer l'écart en années / mois
-	// IF MM2 < MM1 THEN RETURN AAAA2-AAAA1-1/12+MM2-MM1 + ADJUST_MONTH
-	// IF MM2 > MM1 THEN RETURN AAAA2-AAAA1/MM2-MM1 + ADJUST_MONTH
-	// IF MM2 == MM1 THEN IF DD2 > DD1 THEN RETURN AAAA2-AAAA1/MM2-MM1 ELSE RETURN AAAA2-AAAA1-1/12+MM2-MM1
+	//
+	// 2. Se rendre sur le mois cible candidat et voir si on a dépassé
+	// - si ce n'est pas le cas
+	// - si c'est le cas, tenir qu'on doit opérer un changement de mois
+	// - mémoriser le mois cible et calculer le bond réalisé en mois
+	//
+	// 3. Se rendre sur le mois cible, et calculer la différence en seconde entre les 2 dates
+	// - convertir cette différence en jours
 
+	// 1.
+	tempDateCible, _ := AnneesMoisJourToTime( AnneesMoisJours{
+		Annees:jusque.Year(),
+		Mois:int(depuis.Month()),
+		Jours:depuis.Day(),
+	})
 
-	if jusque.Month() < depuis.Month(){
-		return AnneesMoisJours{
-			Annees: jusque.Year()-depuis.Year()-1,
-			Mois: 12+int(jusque.Month())-int(depuis.Month()),
-			}, nil
+	anneeCible := jusque.Year()
+	changementAnnee := 0
+	if tempDateCible.After(jusque) {
+		anneeCible--
+		changementAnnee = 1
 	}
 
+	// 2.
+	moisCible := int(jusque.Month())
+	changementMois2 := 0
+	changementAnnee2 := 0
+	if depuis.Day() > jusque.Day() {
+		moisCible--
+		changementMois2 = 1
+		if moisCible == 0 {
+			moisCible = 12
+			changementAnnee2 = 1
+		}
+	}
+	nbMois := int(jusque.Month()) + 12 * changementAnnee - int(depuis.Month()) - changementMois2
+
+	// 3.
+	tempDateCible, _ = AnneesMoisJourToTime( AnneesMoisJours{
+		Annees:jusque.Year()-changementAnnee2,
+		Mois:moisCible,
+		Jours:depuis.Day(),
+	})
+
+	deltaJours := jusque.Sub(tempDateCible).Minutes()/60/24
+
 	return AnneesMoisJours{
-		Annees: jusque.Year()-depuis.Year(),
-		Mois: int(jusque.Month())-int(depuis.Month()),
+		Annees: anneeCible - depuis.Year(),
+		Mois: nbMois,
+		Jours: int(deltaJours),
 		}, nil
 }

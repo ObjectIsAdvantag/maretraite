@@ -15,7 +15,7 @@ var ErrDateFormatInvalide = errors.New("le format de date n'est pas valide")
 var ErrDateLimites = errors.New("la date n'est pas entre le 01/01/1900 et aujourd'hui")
 
 
-func parseDate(date string) (time.Time, error) {
+func StringToTime(date string) (time.Time, error) {
 	if date == "" {
 		return time.Time{}, ErrDateVide
 	}
@@ -35,7 +35,7 @@ func parseDate(date string) (time.Time, error) {
 	return res, nil
 }
 
-func unparseDate(date time.Time) (string, error) {
+func TimeToString(date time.Time) (string, error) {
 	if date.IsZero() {
 		return "", ErrDateVide
 	}

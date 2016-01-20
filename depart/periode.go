@@ -67,13 +67,13 @@ func (r *ReferentielPeriodeLegales) ajouterPeriode(depuis string, jusque string,
 	from := time.Time{}
 	var err error
 	if depuis != "" {
-		if from, err = parseDate(depuis); err != nil {
+		if from, err = StringToTime(depuis); err != nil {
 			return err
 		}
 	}
 	to := time.Time{}
 	if jusque != "" {
-		if to, err = parseDate(jusque); err != nil {
+		if to, err = StringToTime(jusque); err != nil {
 			return err
 		}
 	}

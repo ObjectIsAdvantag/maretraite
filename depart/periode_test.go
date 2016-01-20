@@ -10,7 +10,7 @@ import (
 
 func TestPeriodePourMoi(t *testing.T) {
 	input := "24/12/1971"
-	birthDate, err := parseDate(input)
+	birthDate, err := StringToTime(input)
 	if err != nil {
 		t.Errorf("parse error in periode check")
 	}

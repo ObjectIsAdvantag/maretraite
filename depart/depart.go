@@ -45,7 +45,7 @@ const ANNEE_MAX = 2100
 // Calcule les informations de départ légal à la retraite, à partir d'une date de naissance au format JJ/MM/AAAA
 // En cas d'erreur, retourne l'erreur ainsi qu'une structure InfosDepartLegal vide
 func CalculerDepartLegal(dateDeNaissance string) (InfosDepartEnRetraite, error) {
-	date, err := parseDate(dateDeNaissance)
+	date, err := StringToTime(dateDeNaissance)
 	if err != nil {
 		return InfosDepartEnRetraite{}, err
 	}
@@ -78,7 +78,7 @@ func calculerDepartLegalInternal(date time.Time) (InfosDepartEnRetraite, error) 
 // Le nombre de trimestres tels qui apparaissent à la date du relevé
 // La dernière année   du relevé de situation individuelle
 func CalculerDepartTauxPlein(dateSaisie string, trimestresAcquis int, annéeDuRelevé int) (CalculDepart, error) {
-	dateNaissance, err := parseDate(dateSaisie)
+	dateNaissance, err := StringToTime(dateSaisie)
 	if err != nil {
 		return CalculDepart{}, err
 	}
@@ -90,6 +90,7 @@ func CalculerDepartTauxPlein(dateSaisie string, trimestresAcquis int, annéeDuRe
 
 	// La formule de calcul est du départ à taux plein
 	// DateDuRelevé + (TrimestresTauxPlein - trimestresAcquis)*4
+	_ = "breakpoint"
 	trimestresAcotiser := infosDepart.TrimestresTauxPlein - trimestresAcquis
 	anneesAcotiser := int(trimestresAcotiser / 4)
 	moisAcotiser := trimestresAcotiser*3 - 12*anneesAcotiser
