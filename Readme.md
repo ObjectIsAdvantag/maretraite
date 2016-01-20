@@ -2,13 +2,24 @@
 # Que trouverez-vous ici ?
 
 Quelques outils qui vous permettront de vous éclairer quant à votre future retraite, 
-si vous êtes dans le cas d'un salarié du privé qui a cotisé au régime général
-développés en #golang, et exposables sous forme d'API
+si vous êtes dans le cas d'un salarié du privé qui a cotisé au régime général.
 
-## Calcul des données de départ en retraite
+Les calculs sont développés en language Go ou encore #golang. [Un tutoriel](https://gist.github.com/leg0ffant/3bee4829ce2ad8fd026c#file-golang-fr-md) en français pour découvrir le langage.
+
+Vous pouvez utiliser ces codes soit en partant de l'exemple depart_test.go et en saissant vos données personnelles,
+ou bien en soumettant vos données à la WebAPI.
 
 
-## Calcul du montant de sa cosition retraite
+## Consulter mes conditions de départ en retraite
+
+A partir de votre relevé de situation individuelle, déterminez à quel moment vous pourrez partir en retraite à taux plein.
+
+```
+
+```
+
+
+## Simuler le montant de sa future cotision retraite
  
 Voir https://www.lassuranceretraite.fr/portail-info/home/salaries/age-et-montant-de-ma-retraite/quel-sera-montant-ma-retraite/le-calcul-en-detail.html
 
@@ -22,19 +33,19 @@ Des recherche sur Google m'orientent vers des calculateurs complexes où je dois 
 Bref, c'est le moment d'apporter my 2 euros...
 
 
+
 # Recherches
 
 ## Sites
 
-- l'assurance retraite : [Calculer](https://www.lassuranceretraite.fr/portail-info/home/salaries/calculer-mon-age-de-depart.html#) mon age de départ à la retraite  
+- l'info retraite : [documentation](http://www.info-retraite.fr/) sur les formalités liées à sa retraite, ainsi que le simulateur [M@rel](http://www.marel.fr/) 
+- l'assurance retraite : [Calculer](https://www.lassuranceretraite.fr/portail-info/home/salaries/calculer-mon-age-de-depart.html#) son age de départ à la retraite  
+- ma retraite en clair : [documentation et calculateur](http://www.la-retraite-en-clair.fr/cid3190637/comment-calculer-pension-retraite.html) 
 
 
 ## Repos Github
 
-- [sgmap](https://github.com/sgmap/retraite)
-Code d'un site présentant des démarches personnalisées de départ à la retraite
-Le code a été crée par [@xnpore](https://twitter.com/xnopre), pour le compte d'un client probablement. 
-Quelques datas peuvent pertinentes à ré-exposer sous forme d'API, à creuser...
+- [sgmap](https://github.com/sgmap/retraite) : code d'un site présentant des démarches personnalisées de départ à la retraite. Le code a été crée par [@xnpore](https://twitter.com/xnopre), Quelques données peuvent pertinentes à ré-exposer sous forme d'API :
    - caisses : https://github.com/sgmap/retraite/blob/master/server/db/evolutions/11.sql
    - départ légal : https://github.com/sgmap/retraite/blob/master/server/db/evolutions/12.sql
 
