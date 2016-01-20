@@ -9,14 +9,14 @@ import (
 	"errors"
 )
 
-// Le type AgeEnAnneesMois représente un age de départ en retraite sous la forme d'un age en années et mois,
+// Le type AnneesMois représente un age sous la forme d'un nombre d'années et de mois.
 // Exemple : 62 ans et 7 mois
-type AgeEnAnneesMois struct {
+type AnneesMois struct {
 	Annees      int		`json:"annees,required"`		// nombre d'années
 	Mois 		int		`json:"mois,omitempty"`			// nombre de mois
 }
 
-func (age AgeEnAnneesMois) EnAnnees() float32 {
+func (age AnneesMois) EnAnnees() float32 {
 	return float32(age.Annees) + float32(age.Mois)/12
 }
 
@@ -24,11 +24,11 @@ func (age AgeEnAnneesMois) EnAnnees() float32 {
 // Ce type est utilisé pour associer une période légale à une durée de naissance.
 // Exemple :  pour les personnes nées à partir du  01/01/1954, 61 ans et 7 mois pour l'âge minimum et 66 ans et 7 mois pour une retraite à taux plein
 type PeriodeAgeLegal struct {
-	Depuis					time.Time			// date de naissance à partir de laquelle les âges de départs en retraite s'appliquent, vide s'il n'y a pas de borne inférieure
-	Jusque					time.Time			// date de naissance jusque laquelle les âges de départs en retraite s'appliquent, vide s'il n'y a pas de borne supérieure
-	AgeDepartMin			AgeEnAnneesMois		// age minimal à partir duquel on peut percevoir sa retraite
-	AgeTauxPleinAuto			AgeEnAnneesMois	// age à partir duquel on percevra sa retraite à taux plein même si le nombre de trimestre cotisés n'est pas suffisant
-	AgeRetraiteForcee		AgeEnAnneesMois		// age à partir duquel un employeur peut exiger qu'un salarié prenne sa retraite même sans son consentement
+	Depuis            time.Time  // date de naissance à partir de laquelle les âges de départs en retraite s'appliquent, vide s'il n'y a pas de borne inférieure
+	Jusque            time.Time  // date de naissance jusque laquelle les âges de départs en retraite s'appliquent, vide s'il n'y a pas de borne supérieure
+	AgeDepartMin      AnneesMois // age minimal à partir duquel on peut percevoir sa retraite
+	AgeTauxPleinAuto  AnneesMois // age à partir duquel on percevra sa retraite à taux plein même si le nombre de trimestre cotisés n'est pas suffisant
+	AgeDepartExigible AnneesMois // age à partir duquel un employeur peut exiger qu'un salarié prenne sa retraite même sans son consentement
 }
 
 // Le type EntreeReferentiel est utilisé pour exposer l'ensemble du référentiel des périodes de départ à la retraite sous forme d'API
@@ -61,7 +61,7 @@ func init() {
 	refAgeLegal.periodes = make(map[time.Time]PeriodeAgeLegal)
 
 	// TODO ajouter les périodes avant
-	refAgeLegal.ajouterPeriode("01/01/1955", "", AgeEnAnneesMois{62,0}, AgeEnAnneesMois{67,0},  AgeEnAnneesMois{70,0})
+	refAgeLegal.ajouterPeriode("01/01/1955", "", AnneesMois{62,0}, AnneesMois{67,0},  AnneesMois{70,0})
 }
 
 // Ajoute une période au référentiel.
@@ -69,7 +69,7 @@ func init() {
 // Si la période s'étend jusqu'à aujourd'hui, la borne supérieure peut être vide.
 // Si la borne inférieure est vide, la période de départ n'est pas bornée.
 // Si la borne supérieure est vide, la période de fin n'est pas bornée.
-func (r *ReferentielPeriodeLegales) ajouterPeriode(depuis string, jusque string, ageMinimal AgeEnAnneesMois, ageAuTauxPlein AgeEnAnneesMois, ageRetraiteForcee AgeEnAnneesMois) error {
+func (r *ReferentielPeriodeLegales) ajouterPeriode(depuis string, jusque string, ageMinimal AnneesMois, ageAuTauxPlein AnneesMois, ageDepartExigible AnneesMois) error {
 	// L'une ou l'autre des bornes peut être vide mais pas les 2
 	if depuis == "" && jusque == "" {
 		return ErrDateFormatInvalide
@@ -88,7 +88,7 @@ func (r *ReferentielPeriodeLegales) ajouterPeriode(depuis string, jusque string,
 		}
 	}
 
-	refAgeLegal.periodes[from] = PeriodeAgeLegal{from, to, ageMinimal, ageAuTauxPlein, ageRetraiteForcee}
+	refAgeLegal.periodes[from] = PeriodeAgeLegal{from, to, ageMinimal, ageAuTauxPlein, ageDepartExigible}
 	return nil
 }
 

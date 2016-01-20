@@ -20,15 +20,18 @@ func TestPeriodePourMoi(t *testing.T) {
 		t.Errorf("get error in periode check")
 	}
 
-	if periode.AgeDepartMin.EnAnnees() != 62 {
+	expected := AnneesMois{Annees:62, Mois:0}
+	if periode.AgeDepartMin != expected {
 		t.Errorf("mauvais age de départ en retraite")
 	}
 
-	if (periode.AgeTauxPleinAuto.EnAnnees() != 67) {
+	expected = AnneesMois{Annees:67, Mois:0}
+	if (periode.AgeTauxPleinAuto != expected) {
 		t.Errorf("mauvais age de départ à taux plein")
 	}
 
-	if (periode.AgeRetraiteForcee.EnAnnees() != 70) {
+	expected = AnneesMois{Annees:70, Mois:0}
+	if (periode.AgeDepartExigible != expected) {
 		t.Errorf("mauvais age de départ forcé")
 	}
 }

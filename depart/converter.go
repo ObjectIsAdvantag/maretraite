@@ -15,22 +15,30 @@ var ErrDateFormatInvalide = errors.New("le format de date n'est pas valide")
 var ErrDateLimites = errors.New("la date n'est pas entre le 01/01/1900 et aujourd'hui")
 
 
-func parseDate(input string) (time.Time, error) {
-	if input == "" {
+func parseDate(date string) (time.Time, error) {
+	if date == "" {
 		return time.Time{}, ErrDateVide
 	}
 
 	// Parser la date
-	res, err := time.Parse(JJMMAAADateFormat, input)
+	res, err := time.Parse(JJMMAAADateFormat, date)
 	if err != nil {
 		return time.Time{}, ErrDateFormatInvalide
 	}
 
 	// Vérifier que la date est bien entre le 1/1/1900 et aujourd'hui
-	min, _ := time.Parse(JJMMAAADateFormat, fmt.Sprintf("01/01/%d", ANNEE_MIN))
+	min, _ := time.ParseInLocation(JJMMAAADateFormat, fmt.Sprintf("01/01/%d", ANNEE_MIN), time.UTC)
 	if res.Before(min) || res.After(time.Now()) {
 		return time.Time{}, ErrDateLimites
 	}
 
 	return res, nil
+}
+
+func unparseDate(date time.Time) (string, error) {
+	if date.IsZero() {
+		return "", ErrDateVide
+	}
+
+	return date.Format(JJMMAAADateFormat), nil
 }

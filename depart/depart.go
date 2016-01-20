@@ -12,51 +12,121 @@ package depart
 
 import (
 	"time"
+	"fmt"
 )
 
-// La structure DepartLegal regroupe les données légales de départ à la retraite.
+// La structure InfosDepartLegal regroupe les données légales relatives au départ à la retraite.
 // Cette structure est calculée à partir d'une date de naissance, voir la fonction CalculerDepartLegal
-type InfosDepartLegal struct {
-	TrimestresRequis	int					`json:"nombreDeTrimestresRequis"`	// nombre de trimestres afin de disposer de sa retraite à taux plein
-	AgeDepartMin   		AgeEnAnneesMois		`json:"ageDepartMinimum"`// âge à partir duquel il est possible de percevoir une retraite, mais elle ne sera pas à taux plein si le nombre de trimestres cotisés n'est pas celui requis
-	//DateDepartMin		string				`json:"dateDepartMinimum"`// date à partir de laquelle il est possible de percevoir une retraite
-	AgeTauxPleinAuto	AgeEnAnneesMois		`json:"ageTauxPleinAutomatique"`// âge à partir duquel il est possible de percevoir une retraite à taux plein même si le nombre de trimestres cotisés n'est pas suffisant
-	//DateDepartAuto		string				`json:"dateDepartAutomatique"`// date à partir de laquelle il est possible de percevoir une retraite à taux plein même si le nombre de trimestres cotisés n'est pas suffisant
+type InfosDepartEnRetraite struct {
+	TrimestresTauxPlein int					`json:"nbTrimestres"`     // nombre de trimestres afin de disposer de sa retraite à taux plein
+	AgeDépartMin        AnneesMois        `json:"ageDepartMinimum"`      // âge à partir duquel il est possible de percevoir une retraite, mais elle ne sera pas à taux plein si le nombre de trimestres cotisés n'est pas celui requis
+																		 //DateDepartMin		string				`json:"dateDepartMinimum"`// date à partir de laquelle il est possible de percevoir une retraite
+	AgeTauxPleinAuto  AnneesMois        `json:"ageTauxPleinAutomatique"` // âge à partir duquel il est possible de percevoir une retraite à taux plein même si le nombre de trimestres cotisés n'est pas suffisant
+																		 //DateDepartAuto		string				`json:"dateDepartAutomatique"`// date à partir de laquelle il est possible de percevoir une retraite à taux plein même si le nombre de trimestres cotisés n'est pas suffisant
+	AgeDépartExigible AnneesMois        `json:"ageDepartExigible"`       // âge à partir duquel l'employeur peut exiger un départ en retraite de l'employé
 }
 
-type InfosDepart struct {
-	Age 				AgeEnAnneesMois    	// âge au moment du départ
-	Date 				time.Time		   	// date en JJ/MM/AAAA
-	Trimestres		 	int					// nombre de trimestres total  entre la date de début d'activité et le moment du départ
-	TrimestreTravailles	int					// nombre de trimestres travaillés entre la date de début d'activité et le moment du départ
+type TauxRetraite string
+const (
+	TAUX_PLEIN TauxRetraite = "Taux Plein"
+	TAUX_PARTIEL TauxRetraite = "Taux Partiel"
+)
+
+
+type CalculDepart struct {
+	Taux	   TauxRetraite		// résultat du calcul du taux pour la date de départ
+	Age        AnneesMois 		// âge au moment du départ
+	Date       time.Time  		// date en JJ/MM/AAAA
+	TrimestresCotisés int 		// nombre de trimestres cotisés au final entre la date de début d'activité et le moment du départ
 }
 
 const ANNEE_MIN = 1900
 const ANNEE_MAX = 2100
 
-// Calcul les informations de départ légale à la retraite, à partir d'une date de naissance au format JJ/MM/AAAA
-// Il est possible de spécifier un nombre de trimestres non cotisés, qui viendront décaler d'autant les dates et âges
-func CalculerDepartLegal(input string, nonCotises int) (*InfosDepartLegal, error) {
-	dateNaissance, err := parseDate(input)
+// Calcule les informations de départ légal à la retraite, à partir d'une date de naissance au format JJ/MM/AAAA
+// En cas d'erreur, retourne l'erreur ainsi qu'une structure InfosDepartLegal vide
+func CalculerDepartLegal(dateDeNaissance string) (InfosDepartEnRetraite, error) {
+	date, err := parseDate(dateDeNaissance)
 	if err != nil {
-		return nil, err
+		return InfosDepartEnRetraite{}, err
 	}
 
-	var res InfosDepartLegal
-	res.TrimestresRequis, err = RechercherTrimestre(dateNaissance)
-	if err != nil {
-		return nil, err
-	}
-
-	al, err := RechercherAgeLegal(dateNaissance)
-	if err != nil {
-		return nil, err
-	}
-
-	res.AgeDepartMin = al.AgeDepartMin
-
-	res.AgeTauxPleinAuto = al.AgeTauxPleinAuto
-
-	return &res, nil
+	return calculerDepartLegalInternal(date)
 }
 
+
+func calculerDepartLegalInternal(date time.Time) (InfosDepartEnRetraite, error) {
+	trimestres, err := RechercherTrimestre(date)
+	if err != nil {
+		return InfosDepartEnRetraite{}, err
+	}
+
+	ageLegal, err := RechercherAgeLegal(date)
+	if err != nil {
+		return InfosDepartEnRetraite{}, err
+	}
+
+	return InfosDepartEnRetraite{
+		TrimestresTauxPlein:trimestres,
+		AgeDépartMin:ageLegal.AgeDepartMin,
+		AgeTauxPleinAuto:ageLegal.AgeTauxPleinAuto,
+		AgeDépartExigible:ageLegal.AgeDepartExigible,
+	}, nil
+}
+
+// Calcule les conditions de départ en retraite à taux plein, à partir de l'année de naissance, et du nombre de trimestres acquis à la fin d'année précisée dans le relevé de situation individuelle.
+// La date de naissance est au format DD/MM/AAAA.
+// Le nombre de trimestres tels qui apparaissent à la date du relevé
+// La dernière année   du relevé de situation individuelle
+func CalculerDepartTauxPlein(dateSaisie string, trimestresAcquis int, annéeDuRelevé int) (CalculDepart, error) {
+	dateNaissance, err := parseDate(dateSaisie)
+	if err != nil {
+		return CalculDepart{}, err
+	}
+
+	infosDepart, err := calculerDepartLegalInternal(dateNaissance)
+	if err != nil {
+		return CalculDepart{}, err
+	}
+
+	// La formule de calcul est du départ à taux plein
+	// DateDuRelevé + (TrimestresTauxPlein - trimestresAcquis)*4
+	trimestresAcotiser := infosDepart.TrimestresTauxPlein - trimestresAcquis
+	anneesAcotiser := int(trimestresAcotiser / 4)
+	moisAcotiser := trimestresAcotiser*3 - 12*anneesAcotiser
+	dateRelevé := time.Date(annéeDuRelevé, 1, 1, 0, 0, 0, 0, time.UTC)
+	dateDepart := dateRelevé.AddDate(anneesAcotiser,moisAcotiser,0)
+
+	age, err := calculerAge(dateDepart, dateNaissance)
+	if err != nil {
+		return CalculDepart{}, err
+	}
+
+	return CalculDepart{
+		Taux:TAUX_PLEIN,
+		Age: age,
+		Date: dateDepart,
+		TrimestresCotisés:infosDepart.TrimestresTauxPlein,
+	}, nil
+}
+
+func calculerAge(jusque time.Time, depuis time.Time) (AnneesMois, error) {
+	if jusque.Before(depuis) {
+		return AnneesMois{}, fmt.Errorf("la date de fin:%s est avant la date de début: %s", jusque, depuis)
+	}
+
+	// Formule de calcul de l'age en année / mois
+	// soient AAAA2/MM2 - AAAA1/MM1
+	// IF MM2 < MM1 RETURN AAAA2-AAAA1-1/12+MM2-MM1 ELSE AAAA2-AAAA1/MM2-MM1
+	if jusque.Month() < depuis.Month(){
+		return AnneesMois{
+			Annees: jusque.Year()-depuis.Year()-1,
+			Mois: 12+int(jusque.Month())-int(jusque.Month()),
+		}, nil
+	}
+
+	return AnneesMois{
+		Annees: jusque.Year()-depuis.Year(),
+		Mois: int(jusque.Month())-int(jusque.Month()),
+		}, nil
+}
