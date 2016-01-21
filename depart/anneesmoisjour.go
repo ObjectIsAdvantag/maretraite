@@ -8,18 +8,17 @@
 // Enfin, il est possible d'obtenir une durée en AnneesMoisJours à partir de la différence entre 2 dates.
 package depart
 
-
 import (
-	"time"
 	"fmt"
+	"time"
 )
 
 // Le type AnneesMois représente une date sous la forme d'un nombre d'années, de mois et de jour
 // Exemple : 62 ans et 7 mois
 type AnneesMoisJours struct {
-	Annees      int		`json:"annees,required"`		// nombre d'années
-	Mois 		int		`json:"mois,omitempty"`			// nombre de mois
-	Jours 		int 	`json:"jours,omitempty"`		// nombre de jours
+	Annees int `json:"annees,required"` // nombre d'années
+	Mois   int `json:"mois,omitempty"`  // nombre de mois
+	Jours  int `json:"jours,omitempty"` // nombre de jours
 }
 
 // Retourne la valeur en années
@@ -31,7 +30,6 @@ func (amj AnneesMoisJours) EnAnnees() float32 {
 func (amj AnneesMoisJours) EnMois() float32 {
 	return float32(amj.Annees*12) + float32(amj.Mois) + float32(amj.Jours/365*12)
 }
-
 
 // Crée un nouvel objet de type time.Time pour l' AnneesMoisJours spécifié
 func AnneesMoisJourToTime(amj AnneesMoisJours) (time.Time, error) {
@@ -81,10 +79,10 @@ func CalculerDurée(depuis time.Time, jusque time.Time) (AnneesMoisJours, error)
 	// - convertir cette différence en jours
 
 	// 1.
-	tempDateCible, _ := AnneesMoisJourToTime( AnneesMoisJours{
-		Annees:jusque.Year(),
-		Mois:int(depuis.Month()),
-		Jours:depuis.Day(),
+	tempDateCible, _ := AnneesMoisJourToTime(AnneesMoisJours{
+		Annees: jusque.Year(),
+		Mois:   int(depuis.Month()),
+		Jours:  depuis.Day(),
 	})
 
 	anneeCible := jusque.Year()
@@ -106,19 +104,19 @@ func CalculerDurée(depuis time.Time, jusque time.Time) (AnneesMoisJours, error)
 			changementAnnee2 = 1
 		}
 	}
-	nbMois := int(jusque.Month()) + 12 * changementAnnee - int(depuis.Month()) - changementMois2
+	nbMois := int(jusque.Month()) + 12*changementAnnee - int(depuis.Month()) - changementMois2
 
 	// 3.
-	tempDateCible, _ = AnneesMoisJourToTime( AnneesMoisJours{
-		Annees:jusque.Year()-changementAnnee2,
-		Mois:moisCible,
-		Jours:depuis.Day(),
+	tempDateCible, _ = AnneesMoisJourToTime(AnneesMoisJours{
+		Annees: jusque.Year() - changementAnnee2,
+		Mois:   moisCible,
+		Jours:  depuis.Day(),
 	})
-	deltaJours := jusque.Sub(tempDateCible).Minutes()/60/24
+	deltaJours := jusque.Sub(tempDateCible).Minutes() / 60 / 24
 
 	return AnneesMoisJours{
 		Annees: anneeCible - depuis.Year(),
-		Mois: nbMois,
-		Jours: int(deltaJours),
-		}, nil
+		Mois:   nbMois,
+		Jours:  int(deltaJours),
+	}, nil
 }

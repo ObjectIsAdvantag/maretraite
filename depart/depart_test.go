@@ -7,7 +7,6 @@ import (
 	"testing"
 )
 
-
 func TestCalculerInfosDeDepartRetaitePourMoi(t *testing.T) {
 	naissance := "24/12/1971"
 	res, err := CalculerDépartLégal(naissance)
@@ -21,12 +20,12 @@ func TestCalculerInfosDeDepartRetaitePourMoi(t *testing.T) {
 		t.Errorf("erreur calcul des trimestres: %d contre %d attendus", res.TrimestresTauxPlein, expTrimestres)
 	}
 
-	expAgeDepartMin := AnneesMoisJours{Annees:62, Mois:0}
+	expAgeDepartMin := AnneesMoisJours{Annees: 62, Mois: 0}
 	if res.AgeDépartMin != expAgeDepartMin {
 		t.Errorf("erreur calcul de l'age de départ min: %v contre %v attendu", res.AgeDépartMin, expAgeDepartMin)
 	}
 
-	expAgeTauxPlein := AnneesMoisJours{Annees:67, Mois:0}
+	expAgeTauxPlein := AnneesMoisJours{Annees: 67, Mois: 0}
 	if res.AgeTauxPleinAuto != expAgeTauxPlein {
 		t.Errorf("erreur calcul de l'age du taux plein automatique: %v contre %v attendu", res.AgeTauxPleinAuto, expAgeDepartMin)
 	}
@@ -40,7 +39,7 @@ func TestCalculerDonnesRetraiteTauxPleinPourMoi(t *testing.T) {
 		return
 	}
 
-	expAgeTauxPlein := AnneesMoisJours{Annees:64, Mois:0, Jours:8}
+	expAgeTauxPlein := AnneesMoisJours{Annees: 64, Mois: 0, Jours: 8}
 	if res.Age != expAgeTauxPlein {
 		t.Errorf("erreur calcul de l'age de départ effectif à taux plein min: %v contre %v attendu", res.Age, expAgeTauxPlein)
 	}
@@ -72,12 +71,12 @@ func TestCalculerInfosDeDepartRetaitePourValérie(t *testing.T) {
 		t.Errorf("erreur calcul des trimestres: %d contre %d attendus", res.TrimestresTauxPlein, expTrimestres)
 	}
 
-	expAgeDepartMin := AnneesMoisJours{Annees:62, Mois:0}
+	expAgeDepartMin := AnneesMoisJours{Annees: 62, Mois: 0}
 	if res.AgeDépartMin != expAgeDepartMin {
 		t.Errorf("erreur calcul de l'age de départ min: %v contre %v attendu", res.AgeDépartMin, expAgeDepartMin)
 	}
 
-	expAgeTauxPlein := AnneesMoisJours{Annees:67, Mois:0}
+	expAgeTauxPlein := AnneesMoisJours{Annees: 67, Mois: 0}
 	if res.AgeTauxPleinAuto != expAgeTauxPlein {
 		t.Errorf("erreur calcul de l'age du taux plein automatique: %v contre %v attendu", res.AgeTauxPleinAuto, expAgeDepartMin)
 	}
@@ -91,7 +90,7 @@ func TestCalculerDonnesRetraiteTauxPleinPourValérie(t *testing.T) {
 		return
 	}
 
-	expAgeTauxPlein := AnneesMoisJours{Annees:66, Mois:2, Jours:27}
+	expAgeTauxPlein := AnneesMoisJours{Annees: 66, Mois: 2, Jours: 27}
 	if res.Age != expAgeTauxPlein {
 		t.Errorf("erreur calcul de l'age de départ effectif à taux plein min: %v contre %v attendu", res.Age, expAgeTauxPlein)
 	}

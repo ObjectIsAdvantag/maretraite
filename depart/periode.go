@@ -5,10 +5,9 @@
 package depart
 
 import (
-	"time"
 	"errors"
+	"time"
 )
-
 
 // Le type PeriodeDepartLegal représente l'age minimal de départ à la retraite.
 // Ce type est utilisé pour associer une période légale à une durée de naissance.
@@ -23,18 +22,18 @@ type PeriodeAgeLegal struct {
 
 // Le type EntreeReferentiel est utilisé pour exposer l'ensemble du référentiel des périodes de départ à la retraite sous forme d'API
 type EntreeReferentiel struct {
-	NaissanceApres			string         		 // date de naissance à partir de laquelle s'applique la législation
-	Legislation				PeriodeAgeLegal
+	NaissanceApres string // date de naissance à partir de laquelle s'applique la législation
+	Legislation    PeriodeAgeLegal
 }
 
 // Le type ReferentielPeriodeLegales regroupe les âges de départ en retraite.
 // Ce type permet d'abriter de futures données.
 // Par défaut, le référentiel de 2010 est chargé.
 type ReferentielPeriodeLegales struct {
-	nom 					string							// nom commun du référentiel
-	depuis					time.Time						// date depuis laquelle le référentiel est en vigueur
-	url 					string							// URL vers le référentiel ministériel
-	periodes 				map[time.Time]PeriodeAgeLegal
+	nom      string    // nom commun du référentiel
+	depuis   time.Time // date depuis laquelle le référentiel est en vigueur
+	url      string    // URL vers le référentiel ministériel
+	periodes map[time.Time]PeriodeAgeLegal
 }
 
 var ErrPeriodeNonTrouvee = errors.New("pas de période pour la date spécifiée")
@@ -46,12 +45,12 @@ var refAgeLegal ReferentielPeriodeLegales
 func init() {
 	// Chargement du référentiel par défaut
 	refAgeLegal.nom = "Réforme de 2010"
-	refAgeLegal.depuis, _ = time.Parse(JJMMAAADateFormat, "01/01/2010") 	// TODO : A vérifier
+	refAgeLegal.depuis, _ = time.Parse(JJMMAAADateFormat, "01/01/2010") // TODO : A vérifier
 	refAgeLegal.url = "http://www.la-retraite-en-clair.fr/cid3190611/a-quel-age-peut-partir-la-retraite.html"
 	refAgeLegal.periodes = make(map[time.Time]PeriodeAgeLegal)
 
 	// TODO ajouter les périodes avant
-	refAgeLegal.ajouterPeriode("01/01/1955", "", AnneesMoisJours{62,0,0}, AnneesMoisJours{67,0,0},  AnneesMoisJours{70,0,0})
+	refAgeLegal.ajouterPeriode("01/01/1955", "", AnneesMoisJours{62, 0, 0}, AnneesMoisJours{67, 0, 0}, AnneesMoisJours{70, 0, 0})
 }
 
 // Ajoute une période au référentiel.

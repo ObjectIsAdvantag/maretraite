@@ -8,7 +8,6 @@ import (
 	"time"
 )
 
-
 func TestParsePasDeDateDeNaissance(t *testing.T) {
 	input := ""
 	if _, err := StringToTime(input); err != ErrDateVide {

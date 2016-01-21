@@ -1,40 +1,15 @@
 
 # Que trouverez-vous ici ?
 
-Quelques outils qui vous permettront de vous éclairer quant à votre future retraite, 
+Des outils qui vous permettront de vous éclairer quant à votre future retraite, 
 si vous êtes dans le cas d'un salarié du privé qui a cotisé au régime général.
 
 Les calculs sont développés en language Go ou encore #golang. [Un tutoriel](https://gist.github.com/leg0ffant/3bee4829ce2ad8fd026c#file-golang-fr-md) en français pour découvrir le langage.
 
 Vous pouvez utiliser ce projet :
-- [x] à partir du code GO, et en adaptant l'exemple placé dans depart_test.go, avec vos données personnelles,
-- [ ] ou à partir de la CLI (non implémenté)
+- [x] ou à partir de la CLI (en cours) : [télécharger] et exécuter sur votre poste
+- [X] à partir du code GO, et en adaptant l'exemple placé dans depart_test.go, avec vos données personnelles,
 - [ ] ou encore à partir de la WebAPI (non implémenté)
-
-
-## Consulter mes conditions de départ en retraite
-
-A partir de votre date de naissance, déterminez les dates importantes pour votre retraite :
-- l'âge minimal auquel vous pourrez prétendre à une retraite (soit parce que vous aurez suffisamment cotisé, soit via le rachat de trimestres)
-- l'âge auquel vous serez assurez de pouvoir prendre votre retraite 
-A partir de votre relevé de situation individuelle, déterminez à quel moment vous pourrez partir en retraite à taux plein.
-
-En page 2, recherchez le tableau Retraite de base, ligne "Salarié du régime de sécurité sociale (CNAV) - ANNEE". 
-Le nombre de trimestres de votre retraite de base, ainsi que l'année sont précisés ici.
-Par exemple : vous disposez de 87 trimestres en 2014 (fin 2014 en fait), reporter 87 et 2014.
-
-
-``` go
-// Evaluer son départ en retraite à taux plein avec les informations extraites du relevé de situation individuelle
-calcul := CalculerDépartTauxPleinThéorique("DATE DE NAISSANCE", "NOMBRE DE TRIMESTRES", "ANNEE DU RELEVE")
-fmt.Printf("SANS interruption de cotisations, vous pourriez partir avec un taux plein le %s, à l'âge de %s, en ayant cotisé %d trimestres au total, soit un reliquat de %d trimestres", 
-      calcul.Date, calcul.Age, calcul.TrimestresCotisés, calcul.TrimestresRestants)
-```
-
-
-## Simuler le montant de sa future cotision retraite
- 
-Voir https://www.lassuranceretraite.fr/portail-info/home/salaries/age-et-montant-de-ma-retraite/quel-sera-montant-ma-retraite/le-calcul-en-detail.html
 
 
 # Pourquoi ce projet ?
@@ -46,11 +21,10 @@ Sur ce dernier point, je ne parle pas d'un montant ferme qui nécessiterait des s
 
 Des recherche sur Google m'orientent vers des calculateurs complexes où je dois resaisir mon relevé de carrière, ou vers des pages simples mais sans API, enfin une recherche sur Github rapporte 5 résultats avec le mot clef Retraite (spirituel ou des projets de site).
 
-Bref, c'est le moment d'apporter "my 2 euros..."
+Bref, c'est le moment d'apporter "my 2 euros..." en proposant un outil qui offre un aperçu de sa future retraite en moins de 5 minutes.
 
 
-
-# Recherches
+# Ressources afférentes au domaine de la retraite
 
 ## Sites
 
@@ -65,6 +39,49 @@ Bref, c'est le moment d'apporter "my 2 euros..."
 - [sgmap](https://github.com/sgmap/retraite) : code d'un site présentant des démarches personnalisées de départ à la retraite. Le code a été crée par [@xnpore](https://twitter.com/xnopre), Quelques données peuvent pertinentes à ré-exposer sous forme d'API :
    - caisses : https://github.com/sgmap/retraite/blob/master/server/db/evolutions/11.sql
    - départ légal : https://github.com/sgmap/retraite/blob/master/server/db/evolutions/12.sql
+
+
+# Pour les développeurs 
+
+git clone
+
+puis 
+
+## Consulter mes conditions de départ en retraite
+
+A partir de votre date de naissance, déterminez les dates importantes pour votre retraite :
+- l'âge minimal auquel vous pourrez prétendre à une retraite (soit parce que vous aurez suffisamment cotisé, soit via le rachat de trimestres)
+- l'âge auquel vous serez assurez de pouvoir prendre votre retraite 
+A partir de votre relevé de situation individuelle, déterminez à quel moment vous pourrez partir en retraite à taux plein.
+
+En page 2, recherchez le tableau Retraite de base, ligne "Salarié du régime de sécurité sociale (CNAV) - ANNEE". 
+Le nombre de trimestres de votre retraite de base, ainsi que l'année sont précisés ici.
+
+Par exemple : vous disposez de 87 trimestres en 2014 (fin 2014 en fait), reporter 87 et 2014.
+``` go
+// Evaluer son départ en retraite à taux plein avec les informations extraites du relevé de situation individuelle
+calcul := CalculerDépartTauxPleinThéorique("DATE DE NAISSANCE", "NOMBRE DE TRIMESTRES", "ANNEE DU RELEVE")
+fmt.Printf("SANS interruption de cotisations, vous pourriez partir avec un taux plein le %s, à l'âge de %s, en ayant cotisé %d trimestres au total, soit un reliquat de %d trimestres", 
+      calcul.Date, calcul.Age, calcul.TrimestresCotisés, calcul.TrimestresRestants)
+```
+
+## Simuler le montant de sa future cotision retraite
+
+Le dev est à peine initié. 
+
+Je m'interroge sur la meilleure façon de présenter une information rapidement.
+
+Aussi, j'attendrais d'avoir des contributions sur ce sujet de la part notamment de conseillers en retraite
+
+En attendant, voici un pointeur utile : 
+Voir https://www.lassuranceretraite.fr/portail-info/home/salaries/age-et-montant-de-ma-retraite/quel-sera-montant-ma-retraite/le-calcul-en-detail.html
+
+
+## DISCLAIMER
+ 
+Le code source a la particularité d'être "orienté français" de part les informations manipulées (types, fonctions, variables). 
+
+C'est une expérience intéressante et bizarre à la fois...
 
 
 # License

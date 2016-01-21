@@ -7,7 +7,6 @@ import (
 	"testing"
 )
 
-
 func TestTrimestresPourMoi(t *testing.T) {
 	input := "24/12/1971"
 	birthDate, err := StringToTime(input)
@@ -24,4 +23,3 @@ func TestTrimestresPourMoi(t *testing.T) {
 		t.Errorf("mauvais nombre de trimestres: %d au lieu de %d", nombre, expected)
 	}
 }
-

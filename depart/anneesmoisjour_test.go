@@ -7,11 +7,9 @@ import (
 	"testing"
 )
 
-
 func Test1(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1971, 12, 24})
 	jusque, _ := AnneesMoisJourToTime(AnneesMoisJours{2016, 1, 20})
-
 
 	age, err := CalculerDurée(depuis, jusque)
 
@@ -19,7 +17,7 @@ func Test1(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 44, 0, 27}
+	expected := AnneesMoisJours{44, 0, 27}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -34,12 +32,11 @@ func Test2(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 44, 0, 27}
+	expected := AnneesMoisJours{44, 0, 27}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
 }
-
 
 func Test3(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1971, 12, 24})
@@ -50,7 +47,7 @@ func Test3(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 44, 1, 1}
+	expected := AnneesMoisJours{44, 1, 1}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -65,7 +62,7 @@ func Test4(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 44, 1, 7}
+	expected := AnneesMoisJours{44, 1, 7}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -80,7 +77,7 @@ func Test5(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 44, 0, 7}
+	expected := AnneesMoisJours{44, 0, 7}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -95,7 +92,7 @@ func Test6(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 44, 0, 8}
+	expected := AnneesMoisJours{44, 0, 8}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -110,7 +107,7 @@ func Test7(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 42, 0, 0}
+	expected := AnneesMoisJours{42, 0, 0}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -125,7 +122,7 @@ func Test8(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 42,1, 0}
+	expected := AnneesMoisJours{42, 1, 0}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -140,12 +137,11 @@ func Test9(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 42,0, 16}
+	expected := AnneesMoisJours{42, 0, 16}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
 }
-
 
 func Test10(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
@@ -156,7 +152,7 @@ func Test10(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 42,1, 16}
+	expected := AnneesMoisJours{42, 1, 16}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -171,7 +167,7 @@ func Test10b(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 42,5, 16}
+	expected := AnneesMoisJours{42, 5, 16}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -186,7 +182,7 @@ func Test10c(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 42,5, 27}
+	expected := AnneesMoisJours{42, 5, 27}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -201,7 +197,7 @@ func Test10d(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 42,5, 28}
+	expected := AnneesMoisJours{42, 5, 28}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -216,7 +212,7 @@ func Test10e(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 42,5, 29}
+	expected := AnneesMoisJours{42, 5, 29}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -231,7 +227,7 @@ func Test10f(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 42,5, 30}
+	expected := AnneesMoisJours{42, 5, 30}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -246,7 +242,7 @@ func Test10g(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 42, 6, 0}
+	expected := AnneesMoisJours{42, 6, 0}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -261,12 +257,11 @@ func Test11(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 41, 6, 0}
+	expected := AnneesMoisJours{41, 6, 0}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
 }
-
 
 func Test12(t *testing.T) {
 	depuis, _ := AnneesMoisJourToTime(AnneesMoisJours{1974, 7, 4})
@@ -277,7 +272,7 @@ func Test12(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 41, 6, 1}
+	expected := AnneesMoisJours{41, 6, 1}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -292,7 +287,7 @@ func Test13(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 41, 5, 30}
+	expected := AnneesMoisJours{41, 5, 30}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -307,7 +302,7 @@ func Test14(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 41, 7, 0}
+	expected := AnneesMoisJours{41, 7, 0}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -322,7 +317,7 @@ func Test15(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 41, 6, 30}
+	expected := AnneesMoisJours{41, 6, 30}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
@@ -337,7 +332,7 @@ func Test16(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, err:%s:", depuis, jusque, err)
 	}
 
-	expected := AnneesMoisJours{ 41, 6, 29}
+	expected := AnneesMoisJours{41, 6, 29}
 	if age != expected {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}

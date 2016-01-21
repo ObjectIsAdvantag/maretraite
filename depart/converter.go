@@ -4,11 +4,10 @@
 // Fonctions de conversion d'une chaîne de caractères en date au format JJ/MM/AAAA
 package depart
 
-
 import (
 	"errors"
-	"time"
 	"fmt"
+	"time"
 )
 
 const JJMMAAADateFormat = "2/1/2006"
@@ -18,13 +17,13 @@ var ErrDateFormatInvalide = errors.New("le format de date n'est pas valide")
 var ErrDateLimites = errors.New("la date n'est pas entre le 01/01/1900 et aujourd'hui")
 
 // La fonction StringToTime convertit une chaîne de caractères au format JJ/MM/AAAA en date de type time.Time
-func StringToTime(date string) (time.Time, error) {
-	if date == "" {
+func StringToTime(dateJJMMAAAA string) (time.Time, error) {
+	if dateJJMMAAAA == "" {
 		return time.Time{}, ErrDateVide
 	}
 
 	// Parser la date
-	res, err := time.Parse(JJMMAAADateFormat, date)
+	res, err := time.Parse(JJMMAAADateFormat, dateJJMMAAAA)
 	if err != nil {
 		return time.Time{}, ErrDateFormatInvalide
 	}
@@ -38,7 +37,7 @@ func StringToTime(date string) (time.Time, error) {
 	return res, nil
 }
 
-// La fonction TimeToString convertit une date de type time.Time en une chaîne de caractères au format JJ/MM/AAAA
+// La fonction TimeToString convertit un type Time en chaîne au format JJ/MM/AAAA
 func TimeToString(date time.Time) (string, error) {
 	if date.IsZero() {
 		return "", ErrDateVide
