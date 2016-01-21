@@ -2,11 +2,11 @@ FROM scratch
 
 MAINTAINER "Stève Sfartz" <steve.sfartz@gmail.com>
 
-COPY . /retraite
+COPY . /deploy
 
 EXPOSE 8080
 
-ENTRYPOINT ["/retraite/bilan", "--port=8080", "-logtostderr=true", "-v=5"]
+ENTRYPOINT ["/deploy/retraite", "--port=8080"]
 
 
 

@@ -7,48 +7,62 @@
 package main
 
 import (
-	"text/template"
 	"os"
+	"text/template"
 
 	"github.com/ObjectIsAdvantag/retraite/depart"
 	log "github.com/Sirupsen/logrus"
 )
 
-type templateData struct {
-	infos 	depart.InfosDepartEnRetraite
-	tauxPlein	depart.CalculDépart
+type UserData struct {
+	Naissance        string
+	DateReleve       int
+	TrimestresAcquis int
 }
 
-const texteBilan = ``
+type templateData struct {
+	User      UserData
+	Infos     depart.InfosDepartEnRetraite
+	TauxPlein depart.CalculDépart
+}
 
 // Point d'entrée du programme
 func main() {
 	// Interroge l'utilisateur
 	log.Debugln("Demande des informations : start")
-	dateDeNaissance, acquis, relevé , _ := interrogerUtilisateur()
-	log.Debugln("Demande des informations : ok! ", dateDeNaissance, acquis, relevé)
+	userData, _ := interrogerUtilisateur()
+	log.Debugln("Demande des informations : ok! ", userData.Naissance, userData.DateReleve, userData.TrimestresAcquis)
 
 	// Calcule les données de départ en retraite
 	log.Debugln("CalculerDépartLégal : start")
-	infosLegales, _ := depart.CalculerDépartLégal(dateDeNaissance)
+	infosLegales, _ := depart.CalculerDépartLégal(userData.Naissance)
 	log.Debugln("CalculerDépartLégal : ok! ", infosLegales)
 
 	log.Debugln("CalculerDépartTauxPleinThéorique : start")
-	departTauxPlein, _ := depart.CalculerDépartTauxPleinThéorique(dateDeNaissance, acquis, relevé)
+	departTauxPlein, _ := depart.CalculerDépartTauxPleinThéorique(userData.Naissance, userData.TrimestresAcquis, userData.DateReleve)
 	log.Debugln("CalculerDépartTauxPleinThéorique : ok! ", departTauxPlein)
 
 	// Génère le bilan
 	log.Debugln("Génération du bilan : start")
-	t , _ := template.New("bilan").Parse(texteBilan)
-	data := templateData{ infosLegales, departTauxPlein}
-	t.Execute(os.Stdout, data)
+	//[PENDING] use template during dev, integrate into binary for production
+	t, _ := template.New("bilan").Parse(TexteBilan)
+	//	templateFile := "bilan.template"
+	//	t, err := template.New(templateFile).ParseFiles(templateFile)
+	//	if err != nil {
+	//		log.Warnln("Impossible de lire le template: ", templateFile, ", err: ", err)
+	//		os.Exit(1)
+	//	}
+	data := templateData{userData, infosLegales, departTauxPlein}
+	if err := t.Execute(os.Stdout, data); err != nil {
+		log.Warnln("Le bilan n'a pas pu être généré, err: ", err)
+	}
 	log.Debugln("Génération du bilan : ok !")
 
 }
 
 // Première implémentation statique
-func interrogerUtilisateur() (string, int, int, error) {
-	return "24/12/1971", 87, 2014, nil
+func interrogerUtilisateur() (UserData, error) {
+	return UserData{Naissance:"24/12/1971", TrimestresAcquis:87, DateReleve:2014}, nil
 }
 
 func init() {

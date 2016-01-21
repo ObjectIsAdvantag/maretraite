@@ -2,7 +2,7 @@ GOFLAGS = -tags netgo
 GITHUB_ACCOUNT = ObjectIsAdvantag
 DOCKER_ACCOUNT = objectisadvantag
 CONFIG=-logtostderr=true -v=5
-PROGRAM=bilan
+PROGRAM=retraite
 PROJECT=github.com/$(GITHUB_ACCOUNT)/retraite
 
 default: all
@@ -16,11 +16,11 @@ all : devenv clean build run
 
 .PHONY: build
 build: clean
-	go build $(GOFLAGS) $(PROGRAM).go
+	go build $(GOFLAGS)
 
 .PHONY: debug
 debug:
-	godebug build $(GOFLAGS) -instrument $(PROJECT)/depart $(PROGRAM).go
+	godebug build $(GOFLAGS) -instrument $(PROJECT)/depart
 	./$(PROGRAM).debug $(CONFIG)
 
 .PHONY: run
