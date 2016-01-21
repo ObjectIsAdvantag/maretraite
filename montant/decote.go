@@ -67,3 +67,8 @@ func DécotePourTrimestresManquants(trimestres int, dateNaissance string) (float
 
 	return ref[trimestres], nil
 }
+
+func SurCotePourTrimestreSupplementaire() float32 {
+	// Taux unique depuis 2008
+	return 1,25
+}
