@@ -30,6 +30,7 @@ type InfosDepart struct {
 	TrimestresCotisés   int
 	TrimestresManquants int
 	Cote                CoeffRetraite
+	MontantCote			string
 }
 
 type CoeffRetraite struct {
@@ -49,7 +50,8 @@ Votre bilan retraite suite à la réforme 2010 :
    - vous aurez alors {{ .DepartMin.AgeDépart.Annees }} ans et {{ .DepartMin.AgeDépart.Mois }} mois
    - avec un total de {{ .DepartMin.TrimestresCotisés }} trimestres acquis si vous cotisez sans interruption
    - il vous manquerait {{ .DepartMin.TrimestresManquants }} trimestres pour prétendre à un taux plein
-   - aussi, votre pension de retraite subirait une {{ .DepartMin.Cote.Type }} de l'ordre de {{ .DepartMin.Cote.Valeur }}
+   - aussi, votre pension subirait une {{ .DepartMin.Cote.Type }} de l'ordre de {{ .DepartMin.Cote.Valeur }} par {{ .DepartMin.Cote.Période }} manquant,
+   - la {{ .DepartMin.Cote.Type }} maximale serait de {{ .DepartMin.MontantCote }} pour un départ le {{ .DepartMin.DateDépart }} avec XX trimestres cotisés
 
 - si vous cotisez sans interruption, vous pourriez opter pour une retraite à taux plein le {{ .TauxPlein.DateDépart }}
    - vous auriez alors {{ .TauxPlein.AgeDépart.Annees }} ans et {{ .TauxPlein.AgeDépart.Mois }}

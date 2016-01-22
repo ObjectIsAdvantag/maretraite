@@ -8,12 +8,12 @@ package main
 
 import (
 	"os"
+	"fmt"
 	"text/template"
 
-	"github.com/ObjectIsAdvantag/retraite/depart"
 	log "github.com/Sirupsen/logrus"
+	"github.com/ObjectIsAdvantag/retraite/depart"
 	"github.com/ObjectIsAdvantag/retraite/montant"
-	"fmt"
 )
 
 
@@ -37,9 +37,12 @@ func main() {
 	// Génère le bilan
 	log.Debugln("Génération du bilan : start")
 	t, _ := template.New("bilan").Parse(TexteBilan)
-	data := preparerDonneesPourTemplate(userData, infosLegales, departTauxPlein)
+	data, err := preparerDonneesPourTemplate(userData, infosLegales, departTauxPlein)
+	if err != nil {
+		log.Fatalf("Le bilan n'a pas pu être généré, err: ", err)
+	}
 	if err := t.Execute(os.Stdout, data); err != nil {
-		log.Warnln("Le bilan n'a pas pu être généré, err: ", err)
+		log.Fatalf("Le bilan n'a pas pu être généré, err: ", err)
 	}
 	log.Debugln("Génération du bilan : ok !")
 
@@ -61,18 +64,41 @@ func init() {
 	log.SetLevel(log.DebugLevel)
 }
 
-func preparerDonneesPourTemplate(user InfosUser, dep depart.InfosDepartEnRetraite, tauxPlein depart.CalculDépart) TemplateData {
-	decote := CoeffRetraite {
+func preparerDonneesPourTemplate(user InfosUser, dep depart.InfosDepartEnRetraite, tauxPlein depart.CalculDépart) (TemplateData, error) {
+	minDecote := CoeffRetraite {
 		Type: "décote",
 		Période: "trimestre",
-		Valeur: fmt.Sprintf("%f%%", montant.Default.Diminution),
+		Valeur: fmt.Sprintf("%.3f%%", montant.Default.Diminution),
 	}
+	dateRelevé, err := depart.CalculerDateReleve(user.DateReleve)
+	if err != nil {
+		log.Debugf("Impossible de calculer le nombre de trimestres cotisés, à cause du relevé, err: %v", err)
+		return TemplateData{}, fmt.Errorf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
+	}
+	delta, err := depart.CalculerDurée(dateRelevé, dep.DateDépartMin)
+	if err != nil {
+		log.Debugf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
+		return TemplateData{}, fmt.Errorf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
+	}
+	minCotises := int(delta.EnMois() / 4) + user.TrimestresCostisés
+	minManquants := dep.TrimestresTauxPlein - minCotises
+	//var dateMinManquants time.Time
+	var minMontantDecote float32
+	if minManquants <= 20 {
+		minMontantDecote, _ = montant.DécotePourTrimestresManquants(minManquants, user.Naissance)
+		//dateMinManquants
+	} else {
+		minMontantDecote, _ =  montant.DécotePourTrimestresManquants(20, user.Naissance)
+		//dateMinManquants
+	}
+
 	min := InfosDepart{
 		DateDépart: depart.TimeToString(dep.DateDépartMin),
 		AgeDépart: dep.AgeDépartMin,
-		TrimestresCotisés: 99999,
-		TrimestresManquants: 99999,
-		Cote: decote,
+		TrimestresCotisés: minCotises,
+		TrimestresManquants: minManquants,
+		Cote: minDecote,
+		MontantCote: fmt.Sprintf("%.3f%%", minMontantDecote),
 	}
 
 	std := CoeffRetraite {
@@ -92,6 +118,6 @@ func preparerDonneesPourTemplate(user InfosUser, dep depart.InfosDepartEnRetrait
 		User:user,
 		DepartMin:min,
 		TauxPlein:plein,
-	}
+	}, nil
 
 }

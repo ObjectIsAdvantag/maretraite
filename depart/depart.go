@@ -48,6 +48,7 @@ const ANNEE_MIN = 0
 const ANNEE_MAX = 2100  // arbitrary limit, because we need one
 
 var ErrDateLimites = errors.New("la date n'est pas entre le 01/01/1900 et aujourd'hui")
+var ErrDateRelevé = errors.New("Le date du relevé est incorrecte, ou date de plus de 20 ans")
 
 // Calcule les informations de départ légal à la retraite, à partir d'une date de naissance au format JJ/MM/AAAA
 // En cas d'erreur, retourne l'erreur ainsi qu'une structure InfosDepartLegal vide
@@ -107,7 +108,10 @@ func CalculerDépartTauxPleinThéorique(dateJJMMAAAA string, trimestresAcquis in
 	trimestresRestants := infosDepart.TrimestresTauxPlein - trimestresAcquis
 	anneesRestantes := int(trimestresRestants / 4)
 	moisRestants := 3*trimestresRestants - 12*anneesRestantes
-	dateRelevé := time.Date(annéeDuRelevé+1, 1, 1, 0, 0, 0, 0, time.UTC)
+	dateRelevé, err := CalculerDateReleve(annéeDuRelevé)
+	if err != nil {
+		return CalculDépart{}, err
+	}
 	dateRetraiteTauxPlein := dateRelevé.AddDate(anneesRestantes, moisRestants, 0)
 
 	age, err := CalculerDurée(dateNaissance, dateRetraiteTauxPlein)
@@ -124,6 +128,15 @@ func CalculerDépartTauxPleinThéorique(dateJJMMAAAA string, trimestresAcquis in
 	}, nil
 }
 
+func CalculerDateReleve(annéeDuRelevé int) (time.Time, error) {
+	// Le relevé doit daté de moins de 20 ans
+	if annéeDuRelevé < time.Now().Year()-20 || annéeDuRelevé > time.Now().Year() {
+		return time.Time{}, ErrDateRelevé
+	}
+
+	return time.Date(annéeDuRelevé+1, 1, 1, 0, 0, 0, 0, time.UTC), nil
+
+}
 
 func parseDateNaissance(dateJJMMAAA string) (time.Time, error) {
 	dateNaissance, err := StringToTime(dateJJMMAAA)
