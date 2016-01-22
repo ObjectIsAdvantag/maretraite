@@ -22,21 +22,6 @@ func TestParseBadFormat(t *testing.T) {
 	}
 }
 
-func TestParseUnderLimit(t *testing.T) {
-	input := "19/01/1890"
-	if _, err := StringToTime(input); err != ErrDateLimites {
-		t.Errorf("parse error, under limit for: %s, err:", input, err)
-	}
-}
-
-func TestParseOverLimit(t *testing.T) {
-	input := "19/01/2020"
-	if _, err := StringToTime(input); err != ErrDateLimites {
-		t.Errorf("parse error, over limit for: %s, err:", input, err)
-
-	}
-}
-
 func TestParseCorrectFormat1900(t *testing.T) {
 	input := "01/01/1971"
 	if _, err := StringToTime(input); err != nil {

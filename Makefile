@@ -7,6 +7,10 @@ PROJECT=github.com/$(GITHUB_ACCOUNT)/retraite
 
 default: all
 
+.PHONY: test
+test:
+	go test $(PROJECT)/depart
+
 .PHONY:devenv
 devenv:
 	go get github.com/Sirupsen/logrus

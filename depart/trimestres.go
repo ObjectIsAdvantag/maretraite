@@ -40,7 +40,7 @@ func init() {
 	refTrimestres.url = "http://www.la-retraite-en-clair.fr/cid3190611/a-quel-age-peut-partir-la-retraite.html"
 	refTrimestres.trimestres = make([]TrimestresParPeriode, 13, 13)
 
-	refTrimestres.trimestres = append(refTrimestres.trimestres, TrimestresParPeriode{ANNEE_MIN, 1948, 160})
+	refTrimestres.trimestres = append(refTrimestres.trimestres, TrimestresParPeriode{ANNEE_NAISSANCE_MIN, 1948, 160})
 	refTrimestres.trimestres = append(refTrimestres.trimestres, TrimestresParPeriode{1949, 1950, 161})
 	refTrimestres.trimestres = append(refTrimestres.trimestres, TrimestresParPeriode{1950, 1951, 162})
 	refTrimestres.trimestres = append(refTrimestres.trimestres, TrimestresParPeriode{1951, 1952, 163})
@@ -52,7 +52,7 @@ func init() {
 	refTrimestres.trimestres = append(refTrimestres.trimestres, TrimestresParPeriode{1964, 1967, 169})
 	refTrimestres.trimestres = append(refTrimestres.trimestres, TrimestresParPeriode{1967, 1970, 170})
 	refTrimestres.trimestres = append(refTrimestres.trimestres, TrimestresParPeriode{1970, 1973, 171})
-	refTrimestres.trimestres = append(refTrimestres.trimestres, TrimestresParPeriode{1973, ANNEE_MAX, 172})
+	refTrimestres.trimestres = append(refTrimestres.trimestres, TrimestresParPeriode{1973, ANNEE_NAISSANCE_MAX, 172})
 
 }
 

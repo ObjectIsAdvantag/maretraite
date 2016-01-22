@@ -12,26 +12,18 @@ import (
 
 	"github.com/ObjectIsAdvantag/retraite/depart"
 	log "github.com/Sirupsen/logrus"
+	"github.com/ObjectIsAdvantag/retraite/montant"
+	"fmt"
 )
 
-type UserData struct {
-	Naissance        string
-	DateReleve       int
-	TrimestresAcquis int
-}
 
-type templateData struct {
-	User      UserData
-	Infos     depart.InfosDepartEnRetraite
-	TauxPlein depart.CalculDépart
-}
 
 // Point d'entrée du programme
 func main() {
 	// Interroge l'utilisateur
 	log.Debugln("Demande des informations : start")
 	userData, _ := interrogerUtilisateur()
-	log.Debugln("Demande des informations : ok! ", userData.Naissance, userData.DateReleve, userData.TrimestresAcquis)
+	log.Debugln("Demande des informations : ok! ", userData.Naissance, userData.DateReleve, userData.TrimestresCostisés)
 
 	// Calcule les données de départ en retraite
 	log.Debugln("CalculerDépartLégal : start")
@@ -39,20 +31,13 @@ func main() {
 	log.Debugln("CalculerDépartLégal : ok! ", infosLegales)
 
 	log.Debugln("CalculerDépartTauxPleinThéorique : start")
-	departTauxPlein, _ := depart.CalculerDépartTauxPleinThéorique(userData.Naissance, userData.TrimestresAcquis, userData.DateReleve)
+	departTauxPlein, _ := depart.CalculerDépartTauxPleinThéorique(userData.Naissance, userData.TrimestresCostisés, userData.DateReleve)
 	log.Debugln("CalculerDépartTauxPleinThéorique : ok! ", departTauxPlein)
 
 	// Génère le bilan
 	log.Debugln("Génération du bilan : start")
-	//[PENDING] use template during dev, integrate into binary for production
 	t, _ := template.New("bilan").Parse(TexteBilan)
-	//	templateFile := "bilan.template"
-	//	t, err := template.New(templateFile).ParseFiles(templateFile)
-	//	if err != nil {
-	//		log.Warnln("Impossible de lire le template: ", templateFile, ", err: ", err)
-	//		os.Exit(1)
-	//	}
-	data := templateData{userData, infosLegales, departTauxPlein}
+	data := preparerDonneesPourTemplate(userData, infosLegales, departTauxPlein)
 	if err := t.Execute(os.Stdout, data); err != nil {
 		log.Warnln("Le bilan n'a pas pu être généré, err: ", err)
 	}
@@ -61,8 +46,8 @@ func main() {
 }
 
 // Première implémentation statique
-func interrogerUtilisateur() (UserData, error) {
-	return UserData{Naissance:"24/12/1971", TrimestresAcquis:87, DateReleve:2014}, nil
+func interrogerUtilisateur() (InfosUser, error) {
+	return InfosUser{Naissance:"24/12/1971", TrimestresCostisés:87, DateReleve:2014}, nil
 }
 
 func init() {
@@ -74,4 +59,39 @@ func init() {
 	// Only log the warning severity or above.
 	// [PENDING]
 	log.SetLevel(log.DebugLevel)
+}
+
+func preparerDonneesPourTemplate(user InfosUser, dep depart.InfosDepartEnRetraite, tauxPlein depart.CalculDépart) TemplateData {
+	decote := CoeffRetraite {
+		Type: "décote",
+		Période: "trimestre",
+		Valeur: fmt.Sprintf("%f%%", montant.Default.Diminution),
+	}
+	min := InfosDepart{
+		DateDépart: depart.TimeToString(dep.DateDépartMin),
+		AgeDépart: dep.AgeDépartMin,
+		TrimestresCotisés: 99999,
+		TrimestresManquants: 99999,
+		Cote: decote,
+	}
+
+	std := CoeffRetraite {
+		Type: "taux plein",
+		Période: "aucune",
+		Valeur: "0%",
+	}
+	plein := InfosDepart{
+		DateDépart: depart.TimeToString(tauxPlein.Date),
+		AgeDépart: tauxPlein.Age,
+		TrimestresCotisés: tauxPlein.TrimestresCotisés,
+		TrimestresManquants: tauxPlein.TrimestresRestants,
+		Cote: std,
+	}
+
+	return TemplateData{
+		User:user,
+		DepartMin:min,
+		TauxPlein:plein,
+	}
+
 }

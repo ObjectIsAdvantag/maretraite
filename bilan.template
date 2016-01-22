@@ -1,13 +1,36 @@
-Vos donnÃ©es personnelles :
-- vous Ãªtes nÃ© le
+Vos données personnelles :
+- vous êtes né le {{ .user.naissance }}
+- à fin {{ .user.dateReleve }}, vous aviez acquis {{ .user.trimestresAcquis }}
+
+Votre bilan retraite suite à la réforme 2010 :
+
+- vous partiriez en retraite au plus tôt le {{ .date }}
+   - vous aurez alors {{ .min.age.annees }} ans et {{ .min.age.mois }}
+   - vous aurez acquis {{ .min.trimestres }} si vous cotisez sans interruption jusqu'alors
+   - il vous manquera {{ .bilan.infos.trimestresRequis - .min.trimestres }}trimestres pour avoir un taux plein
+   - votre pension de retraite subirait donc une décôte de l'ordre de {{ .calculerDecode }}
+
+- vous pourrez opter pour une retraite à taux plein le {{ .date }}
+   - vous aurez alors {{ .min.age.annees }} ans et {{ .min.age.mois }}
+   - vous aurez acquis {{ .min.trimestres }} si vous cotisez sans interruption jusqu'alors
+   - votre pension serait donc de l'ordre de de 50% de vos 25 meilleures années de revenus
 
 
+
+
+A quel moment prendre votre retraite :
+- vous avez plusieurs options :
+   - continuer à travailler au delà de {{ }}, {{}}, {{ }}
+   - de {{ }}, vous travaillerez pour atteindre le taux plein
+   - de {{ }}, vous travaillerez pour une surcote
+
+- au delà du {{ }}, où vous aurez {{ }}, votre employeur pourrait exiger que vous preniez votre retraite
 
 ********************************************************************************
-Ce bilan vous est proposÃ© gratuitement, sans publicitÃ© ni exploitation de vos donnÃ©es personnelles.
-Si vous Ãªtes un conseiller Retraite, n'hÃ©sitez pas Ã  soumettre vos idÃ©es (amÃ©liorations, correctifs...) : https://github.com/ObjectIsAdvantag/retraite/issues/1
-Si vous Ãªtes dÃ©veloppeur, n'hÃ©stiez pas Ã  contribuer au projet opensource #golang sous license MIT : https://github.com/ObjectIsAdvantag/retraite
-Copyright 2016, StÃ¨ve Sfartz - @ObjectIsAdvantag
+Ce bilan vous est proposé gratuitement, sans publicité ni exploitation de vos données personnelles.
+Si vous êtes un conseiller Retraite, n'hésitez pas à soumettre vos idées (améliorations, correctifs...) : https://github.com/ObjectIsAdvantag/retraite/issues/1
+Si vous êtes développeur, n'héstiez pas à contribuer au projet opensource #golang sous license MIT : https://github.com/ObjectIsAdvantag/retraite
+Copyright 2016, Stève Sfartz - @ObjectIsAdvantag
 ********************************************************************************
 
 --
@@ -15,3 +38,21 @@ Pour en savoir plus :
 - le site info-retraite :
 - le simulateur M@rel :
 - les decotes et surcotes :
+
+FAQ
+- ? Comment percevoir une pension de retraite à taux plein
+   - vous devrez avoir cotisé le nombre de trimestres requis et fonction de votre année de naissance, {{ .infos.trimestres }} trimestres dans votre cas
+   - soit avoir atteint l'âge de déclenchement automatique à taux plein, {{ .auto.age }} dans votre cas si vous cotisez sans interruption
+   - ? une retraite à taux plein correspond globalement à une pension de l'ordre de 50% de vos 25 meilleures années de revenus
+   - ? une retraite à taux plein s'obtient en ayant cumulé un nombre de trimestres légal et fonction de votre année de naissance
+
+- ? Comment cotiser sans interruption
+   - Si vous travaillez en tant que salarié, votre employeur se charge de cotiser
+   - Si vous
+
+- ? Comment obtenir mon relevé d'infomations
+   - le plus simple est de vous connecter sur le site
+   - des relevés vous sont automatiquement transmis tous les 5 ans à partir de vos 40 ans
+   - il est possible de prendre rendez-vous à partir de 55 ans
+
+

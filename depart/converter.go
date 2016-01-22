@@ -6,7 +6,6 @@ package depart
 
 import (
 	"errors"
-	"fmt"
 	"time"
 )
 
@@ -14,7 +13,6 @@ const JJMMAAADateFormat = "2/1/2006"
 
 var ErrDateVide = errors.New("la date n'est pas renseignée")
 var ErrDateFormatInvalide = errors.New("le format de date n'est pas valide")
-var ErrDateLimites = errors.New("la date n'est pas entre le 01/01/1900 et aujourd'hui")
 
 // La fonction StringToTime convertit une chaîne de caractères au format JJ/MM/AAAA en date de type time.Time
 func StringToTime(dateJJMMAAAA string) (time.Time, error) {
@@ -28,20 +26,10 @@ func StringToTime(dateJJMMAAAA string) (time.Time, error) {
 		return time.Time{}, ErrDateFormatInvalide
 	}
 
-	// Vérifier que la date est bien entre le 1/1/1900 et aujourd'hui
-	min, _ := time.ParseInLocation(JJMMAAADateFormat, fmt.Sprintf("01/01/%d", ANNEE_MIN), time.UTC)
-	if res.Before(min) || res.After(time.Now()) {
-		return time.Time{}, ErrDateLimites
-	}
-
 	return res, nil
 }
 
 // La fonction TimeToString convertit un type Time en chaîne au format JJ/MM/AAAA
-func TimeToString(date time.Time) (string, error) {
-	if date.IsZero() {
-		return "", ErrDateVide
-	}
-
-	return date.Format(JJMMAAADateFormat), nil
+func TimeToString(date time.Time) string {
+	return date.Format(JJMMAAADateFormat)
 }

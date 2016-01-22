@@ -12,6 +12,8 @@ package depart
 
 import (
 	"time"
+	"fmt"
+	"errors"
 )
 
 // La structure InfosDepartLegal regroupe les données légales relatives au départ à la retraite.
@@ -27,7 +29,6 @@ type InfosDepartEnRetraite struct {
 }
 
 type TauxRetraite string
-
 const (
 	TAUX_PLEIN   TauxRetraite = "Taux Plein"
 	TAUX_PARTIEL TauxRetraite = "Taux Partiel"
@@ -41,13 +42,17 @@ type CalculDépart struct {
 	TrimestresRestants int             // nombre de trimestres restants à cotiser
 }
 
-const ANNEE_MIN = 1900
-const ANNEE_MAX = 2100
+const ANNEE_NAISSANCE_MIN = 1900
+var ANNEE_NAISSANCE_MAX = time.Now().Year()
+const ANNEE_MIN = 0
+const ANNEE_MAX = 2100  // arbitrary limit, because we need one
+
+var ErrDateLimites = errors.New("la date n'est pas entre le 01/01/1900 et aujourd'hui")
 
 // Calcule les informations de départ légal à la retraite, à partir d'une date de naissance au format JJ/MM/AAAA
 // En cas d'erreur, retourne l'erreur ainsi qu'une structure InfosDepartLegal vide
 func CalculerDépartLégal(dateJJMMAAAA string) (InfosDepartEnRetraite, error) {
-	date, err := StringToTime(dateJJMMAAAA)
+	date, err := parseDateNaissance(dateJJMMAAAA)
 	if err != nil {
 		return InfosDepartEnRetraite{}, err
 	}
@@ -55,13 +60,13 @@ func CalculerDépartLégal(dateJJMMAAAA string) (InfosDepartEnRetraite, error) {
 	return calculerDépartLégalInterne(date)
 }
 
-func calculerDépartLégalInterne(date time.Time) (InfosDepartEnRetraite, error) {
-	trimestres, err := RechercherTrimestre(date)
+func calculerDépartLégalInterne(dateNaissance time.Time) (InfosDepartEnRetraite, error) {
+	trimestres, err := RechercherTrimestre(dateNaissance)
 	if err != nil {
 		return InfosDepartEnRetraite{}, err
 	}
 
-	ageLegal, err := RechercherAgeLegal(date)
+	ageLegal, err := RechercherAgeLegal(dateNaissance)
 	if err != nil {
 		return InfosDepartEnRetraite{}, err
 	}
@@ -69,10 +74,14 @@ func calculerDépartLégalInterne(date time.Time) (InfosDepartEnRetraite, error)
 	return InfosDepartEnRetraite{
 		TrimestresTauxPlein: trimestres,
 		AgeDépartMin:        ageLegal.AgeDepartMin,
+		DateDépartMin:		 DatePlusAge(dateNaissance, ageLegal.AgeDepartMin),
 		AgeTauxPleinAuto:    ageLegal.AgeTauxPleinAuto,
+		DateTauxPleinAuto:	 DatePlusAge(dateNaissance, ageLegal.AgeTauxPleinAuto),
 		AgeDépartExigible:   ageLegal.AgeDepartExigible,
+		DateDépartExigible:	 DatePlusAge(dateNaissance, ageLegal.AgeDepartExigible),
 	}, nil
 }
+
 
 // Calcule les conditions de départ en retraite à taux plein, à partir de l'année de naissance, et du nombre de trimestres acquis à la fin d'année précisée dans le relevé de situation individuelle.
 // La date de naissance est au format DD/MM/AAAA.
@@ -83,7 +92,7 @@ func calculerDépartLégalInterne(date time.Time) (InfosDepartEnRetraite, error)
 //    - que vous ayez atteint l'âge minimal de départ en retraite pour votre année de naissance (voir fonction
 // Par ailleurs, vous pourrez partir à taux plein si l'âge retourné par cette fonction est supérieur à l'âge automatique à taux plein défini pour votre année de naissance
 func CalculerDépartTauxPleinThéorique(dateJJMMAAAA string, trimestresAcquis int, annéeDuRelevé int) (CalculDépart, error) {
-	dateNaissance, err := StringToTime(dateJJMMAAAA)
+	dateNaissance, err := parseDateNaissance(dateJJMMAAAA)
 	if err != nil {
 		return CalculDépart{}, err
 	}
@@ -114,3 +123,20 @@ func CalculerDépartTauxPleinThéorique(dateJJMMAAAA string, trimestresAcquis in
 		TrimestresRestants: trimestresRestants,
 	}, nil
 }
+
+
+func parseDateNaissance(dateJJMMAAA string) (time.Time, error) {
+	dateNaissance, err := StringToTime(dateJJMMAAA)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	// Vérifier les bornes de la date de naissance
+	min, _ := time.ParseInLocation(JJMMAAADateFormat, fmt.Sprintf("01/01/%d", ANNEE_NAISSANCE_MIN), time.UTC)
+	if dateNaissance.Before(min) || dateNaissance.After(time.Now()) {
+		return time.Time{}, ErrDateLimites
+	}
+
+	return dateNaissance, nil
+}
+

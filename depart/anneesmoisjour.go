@@ -33,7 +33,7 @@ func (amj AnneesMoisJours) EnMois() float32 {
 
 // Crée un nouvel objet de type time.Time pour l' AnneesMoisJours spécifié
 func AnneesMoisJourToTime(amj AnneesMoisJours) (time.Time, error) {
-	if amj.Annees < 0 || amj.Annees > 2100 {
+	if amj.Annees < ANNEE_MIN || amj.Annees > ANNEE_MAX {
 		return time.Time{}, ErrDateFormatInvalide
 	}
 	if amj.Mois < 1 || amj.Mois > 12 {
@@ -55,12 +55,25 @@ func TimeToAnneesMoisJour(t time.Time) (AnneesMoisJours, error) {
 	return AnneesMoisJours{t.Year(), int(t.Month()), t.Day()}, nil
 }
 
+// Implementation alternative basée sur time.AddDate() avec arguments négatifs
+// Les premiers tests semblent retourner des résultats différents
+// [TODO] A creuser
+func CalculerDuréeAlt(depuis time.Time, jusque time.Time) (AnneesMoisJours, error) {
+	comp := jusque.AddDate(depuis.Year() * -1, int(depuis.Month()) * -1, depuis.Day() * -1)
+	return TimeToAnneesMoisJour(comp)
+}
+
 // Cette fonction calcule une durée au format AnneesMoisJour, en tenant compte du calendrier réel pour les dates comparées
 func CalculerDurée(depuis time.Time, jusque time.Time) (AnneesMoisJours, error) {
 
 	if jusque.Before(depuis) {
 		return AnneesMoisJours{}, fmt.Errorf("la date de fin:%s se situe avant la date de début: %s", jusque, depuis)
 	}
+
+	// UPDATE 2016/1/21 La fonction Time.AddDate accepte des arguments négatifs !
+	// Etudier s'il est possible de remplacer cet algo maison par :
+	// comp, _ := jusque.AddDate(depuis.Year() * -1, int(depuis.Month()) * -1, depuis.Day() * -1)
+	// return TimeToAnneesMoisJour(comp), nil
 
 	// Formule de calcul de l'age en année / mois
 	// soient AAAA2/MM2/DD2 - AAAA1/MM1/DD1
@@ -119,4 +132,9 @@ func CalculerDurée(depuis time.Time, jusque time.Time) (AnneesMoisJours, error)
 		Mois:   nbMois,
 		Jours:  int(deltaJours),
 	}, nil
+}
+
+// Calcule une nouvelle date en ajoutant un type Time et un type AnneesMoisHomme
+func DatePlusAge(date time.Time, age AnneesMoisJours) time.Time {
+	return date.AddDate(age.Annees, age.Mois, age.Jours)
 }

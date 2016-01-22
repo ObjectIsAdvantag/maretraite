@@ -23,3 +23,20 @@ func TestTrimestresPourMoi(t *testing.T) {
 		t.Errorf("mauvais nombre de trimestres: %d au lieu de %d", nombre, expected)
 	}
 }
+
+func TestTrimestresPourValérie(t *testing.T) {
+	input := "04/07/1974"
+	birthDate, err := StringToTime(input)
+	if err != nil {
+		t.Errorf("parse error in periode check")
+	}
+
+	expected := 172
+	nombre, err := RechercherTrimestre(birthDate)
+	if err != nil {
+		t.Errorf("get error in trimestre check")
+	}
+	if nombre != expected {
+		t.Errorf("mauvais nombre de trimestres: %d au lieu de %d", nombre, expected)
+	}
+}

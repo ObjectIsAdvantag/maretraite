@@ -45,11 +45,11 @@ var refAgeLegal ReferentielPeriodeLegales
 func init() {
 	// Chargement du référentiel par défaut
 	refAgeLegal.nom = "Réforme de 2010"
-	refAgeLegal.depuis, _ = time.Parse(JJMMAAADateFormat, "01/01/2010") // TODO : A vérifier
+	refAgeLegal.depuis, _ = time.Parse(JJMMAAADateFormat, "09/11/2010") // https://fr.wikipedia.org/wiki/R%C3%A9forme_des_retraites_en_France_en_2010
 	refAgeLegal.url = "http://www.la-retraite-en-clair.fr/cid3190611/a-quel-age-peut-partir-la-retraite.html"
 	refAgeLegal.periodes = make(map[time.Time]PeriodeAgeLegal)
 
-	// TODO ajouter les périodes avant
+	// TODO ajouter les périodes avant 1955
 	refAgeLegal.ajouterPeriode("01/01/1955", "", AnneesMoisJours{62, 0, 0}, AnneesMoisJours{67, 0, 0}, AnneesMoisJours{70, 0, 0})
 }
 

@@ -7,6 +7,21 @@ import (
 	"testing"
 )
 
+
+func TestHorsLimitesInf(t *testing.T) {
+	naissance := "19/01/1890"
+	if _, err := CalculerDépartLégal(naissance); err != ErrDateLimites {
+		t.Errorf("parse error, under limit for: %s, err:", naissance, err)
+	}
+}
+
+func TestHorsLimitesInfSup(t *testing.T) {
+	naissance := "19/01/2017"
+	if _, err := CalculerDépartLégal(naissance); err != ErrDateLimites {
+		t.Errorf("parse error, over limit for: %s, err:", naissance, err)
+	}
+}
+
 func TestCalculerInfosDeDepartRetaitePourMoi(t *testing.T) {
 	naissance := "24/12/1971"
 	res, err := CalculerDépartLégal(naissance)
@@ -20,14 +35,34 @@ func TestCalculerInfosDeDepartRetaitePourMoi(t *testing.T) {
 		t.Errorf("erreur calcul des trimestres: %d contre %d attendus", res.TrimestresTauxPlein, expTrimestres)
 	}
 
-	expAgeDepartMin := AnneesMoisJours{Annees: 62, Mois: 0}
-	if res.AgeDépartMin != expAgeDepartMin {
-		t.Errorf("erreur calcul de l'age de départ min: %v contre %v attendu", res.AgeDépartMin, expAgeDepartMin)
+	expAge := AnneesMoisJours{Annees: 62, Mois: 0}
+	if res.AgeDépartMin != expAge {
+		t.Errorf("erreur calcul de l'age de départ min: %v contre %v attendu", res.AgeDépartMin, expAge)
 	}
 
-	expAgeTauxPlein := AnneesMoisJours{Annees: 67, Mois: 0}
-	if res.AgeTauxPleinAuto != expAgeTauxPlein {
-		t.Errorf("erreur calcul de l'age du taux plein automatique: %v contre %v attendu", res.AgeTauxPleinAuto, expAgeDepartMin)
+	expDate, _ := StringToTime("24/12/2033")
+	if res.DateDépartMin != expDate {
+		t.Errorf("erreur calcul de la date de départ min: %v contre %v attendu", res.DateDépartMin, expDate)
+	}
+
+	expAge = AnneesMoisJours{Annees: 67, Mois: 0}
+	if res.AgeTauxPleinAuto != expAge {
+		t.Errorf("erreur calcul de l'age du taux plein automatique: %v contre %v attendu", res.AgeTauxPleinAuto, expAge)
+	}
+
+	expDate, _ = StringToTime("24/12/2038")
+	if res.DateTauxPleinAuto != expDate {
+		t.Errorf("erreur calcul de la date de départ min: %v contre %v attendu", res.DateTauxPleinAuto, expDate)
+	}
+
+	expAge = AnneesMoisJours{Annees: 70, Mois: 0}
+	if res.AgeDépartExigible != expAge {
+		t.Errorf("erreur calcul de l'age du taux plein automatique: %v contre %v attendu", res.AgeDépartExigible, expAge)
+	}
+
+	expDate, _ = StringToTime("24/12/2041")
+	if res.DateDépartExigible != expDate {
+		t.Errorf("erreur calcul de la date de départ min: %v contre %v attendu", res.DateDépartExigible, expDate)
 	}
 }
 
@@ -74,6 +109,11 @@ func TestCalculerInfosDeDepartRetaitePourValérie(t *testing.T) {
 	expAgeDepartMin := AnneesMoisJours{Annees: 62, Mois: 0}
 	if res.AgeDépartMin != expAgeDepartMin {
 		t.Errorf("erreur calcul de l'age de départ min: %v contre %v attendu", res.AgeDépartMin, expAgeDepartMin)
+	}
+
+	expDateDepartMin, _ := StringToTime("4/07/2036")
+	if res.DateDépartMin != expDateDepartMin {
+		t.Errorf("erreur calcul de la date de départ min: %v contre %v attendu", res.DateDépartMin, expDateDepartMin)
 	}
 
 	expAgeTauxPlein := AnneesMoisJours{Annees: 67, Mois: 0}
