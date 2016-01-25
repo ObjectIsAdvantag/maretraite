@@ -41,18 +41,14 @@ Pour en savoir plus :
 
 FAQ
 - ? Comment percevoir une pension de retraite à taux plein
-   - vous devrez avoir cotisé le nombre de trimestres requis et fonction de votre année de naissance, {{ .infos.trimestres }} trimestres dans votre cas
-   - soit avoir atteint l'âge de déclenchement automatique à taux plein, {{ .auto.age }} dans votre cas si vous cotisez sans interruption
+   - vous devrez avoir cotisé le nombre de trimestres requis et fonction de votre année de naissance, ???? trimestres dans votre cas
+   - soit avoir atteint l'âge de déclenchement automatique à taux plein, ???? dans votre cas si vous cotisez sans interruption
    - ? une retraite à taux plein correspond globalement à une pension de l'ordre de 50% de vos 25 meilleures années de revenus
    - ? une retraite à taux plein s'obtient en ayant cumulé un nombre de trimestres légal et fonction de votre année de naissance
 
-- ? Comment cotiser sans interruption
-   - Si vous travaillez en tant que salarié, votre employeur se charge de cotiser
-   - Si vous
-
 - ? Comment obtenir mon relevé d'infomations
-   - le plus simple est de vous connecter sur le site
-   - des relevés vous sont automatiquement transmis tous les 5 ans à partir de vos 40 ans
-   - il est possible de prendre rendez-vous à partir de 55 ans
-
+   - des relevés de situation vous sont transmis automatiquement tous les 5 ans à partir de vos 40 ans
+   - vous pouvez aussi générer votre relevé après avoir créé un compte sur le site XXXXXX
+   - à partir de 55 ans, il est aussi possible de prendre rendez-vous lien XXXX
+--
 

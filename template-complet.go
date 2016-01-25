@@ -6,52 +6,54 @@ package main
 
 import (
 	"github.com/ObjectIsAdvantag/retraite/depart"
+	"github.com/ObjectIsAdvantag/retraite/pension"
+
 )
 
 // The structure used by the template
 type TemplateData struct {
-	User           InfosUser
-	DepartMin      InfosDepart
+	User            InfosUser
+	Infos			depart.InfosDepartEnRetraite
+	DepartMin      InfosDepartMin
 	TauxPlein      InfosDepart
 	DépartAuto     InfosDepart
 	DépartExigible InfosDepart
-	Surcote        CoeffRetraite
-}
-
-type InfosUser struct {
-	Naissance          string
-	DateReleve         int
-	TrimestresCostisés int
 }
 
 type InfosDepart struct {
 	DateDépart          string
 	AgeDépart           depart.AnneesMoisJours
 	TrimestresCotisés   int
+
+}
+
+type InfosDepartMin struct {
+	InfosDepart
 	TrimestresManquants int
-	Cote                CoeffRetraite
-	MontantCote			string
+	Decote              pension.CalculDecote
 }
 
-type CoeffRetraite struct {
-	Type    string // "surcote ou décote ou pleine"
-	Valeur  string // en pourcentage
-	Période string // "trimestre" ou "année""
-}
 
-const TexteBilan = `
+
+
+var BilanComplet  = `
 Vos données personnelles :
 - vous êtes né le {{ .User.Naissance }}
-- à fin {{ .User.DateReleve }}, vous aviez acquis {{ .User.TrimestresCostisés }} trimestres
+- à fin {{ .User.DateReleve }}, vous aviez acquis {{ .User.TrimestresCotisés }} trimestres
 
 Votre bilan retraite suite à la réforme 2010 :
 
+- au vu de votre année de naissance,
+   - vous devez cotiser {{ .Infos.TrimestresTauxPlein }} trimestres pour une retraite à taux plein,
+   - vous partiriez partir en retraite au plus tôt à {{ .Infos.AgeDépartMin.EnAnnees }} ans et {{ .Infos.AgeDépartMin.Mois }} mois avec décôte si vous n'avez pas suffisamment cotisé,
+   - et vous obtiendriez automatiquement une pension à taux plein à {{ .Infos.AgeTauxPleinAuto.Annees }} ans et {{ .Infos.AgeTauxPleinAuto.Mois }}.
+
 - vous partirez en retraite au plus tôt le {{ .DepartMin.DateDépart }}
    - vous aurez alors {{ .DepartMin.AgeDépart.Annees }} ans et {{ .DepartMin.AgeDépart.Mois }} mois
-   - avec un total de {{ .DepartMin.TrimestresCotisés }} trimestres acquis si vous cotisez sans interruption
-   - il vous manquerait {{ .DepartMin.TrimestresManquants }} trimestres pour prétendre à un taux plein
-   - aussi, votre pension subirait une {{ .DepartMin.Cote.Type }} de l'ordre de {{ .DepartMin.Cote.Valeur }} par {{ .DepartMin.Cote.Période }} manquant,
-   - la {{ .DepartMin.Cote.Type }} maximale serait de {{ .DepartMin.MontantCote }} pour un départ le {{ .DepartMin.DateDépart }} avec XX trimestres cotisés
+   - avec un total de {{ .DepartMin.TrimestresCotisés }} trimestres acquis si vous continuez à cotiser sans interruption
+   - il vous manquerait {{ .DepartMin.TrimestresManquants }} trimestres pour prétendre à un taux plein,
+   - aussi, votre pension de 50% à taux plein subirait une décote de {{ .DepartMin.Decote.Decote.Diminution }}% par trimestre manquant, dans la limite maximale de 20 trimestres,
+   - pour {{ .DepartMin.Decote.TrimestresRetenus }} trimestres manquants votre pension serait de {{ .DepartMin.Decote.TauxPension }}%
 
 - si vous cotisez sans interruption, vous pourriez opter pour une retraite à taux plein le {{ .TauxPlein.DateDépart }}
    - vous auriez alors {{ .TauxPlein.AgeDépart.Annees }} ans et {{ .TauxPlein.AgeDépart.Mois }}
@@ -74,9 +76,9 @@ Votre bilan retraite suite à la réforme 2010 :
 
 Que retenir :
    - vous pourrez demander à partir en retraite à partir du {{ .DepartMin.DateDépart }}
-   - le montant de votre retraite sera fonction du nombre de trimestres cotisés,
+   - le pension de votre retraite sera fonction du nombre de trimestres cotisés,
 
-Pour augmenter le montant de votre pension :
+Pour augmenter le pension de votre pension :
    - vous pourriez augmenter votre nombre de trimestres cotisés en rachetant des trimestres,
    - ou bénéficier du déclenchement automatique de votre taux plein à partir du {{ .DépartAuto.DateDépart }},
    - enfin, vous pouvez reprendre une activité après votre départ en retraite.
@@ -95,9 +97,21 @@ Si vous êtes développeur, n'héstiez pas à contribuer au projet opensource #g
 Copyright 2016, Stève Sfartz - @ObjectIsAdvantag
 ********************************************************************************
 
---
+
 Pour en savoir plus :
 - le site info-retraite :
 - le simulateur M@rel :
 - les decotes et surcotes :
+
+Questions/Compétences
+- ? Comment percevoir une pension de retraite à taux plein
+   - vous devrez avoir cotisé le nombre de trimestres requis et fonction de votre année de naissance, ???? trimestres dans votre cas
+   - soit avoir atteint l'âge de déclenchement automatique à taux plein, ???? dans votre cas si vous cotisez sans interruption
+   - ? une retraite à taux plein correspond globalement à une pension de l'ordre de 50% de vos 25 meilleures années de revenus
+   - ? une retraite à taux plein s'obtient en ayant cumulé un nombre de trimestres légal et fonction de votre année de naissance
+
+- ? Comment obtenir mon relevé d'infomations
+   - des relevés de situation vous sont transmis automatiquement tous les 5 ans à partir de vos 40 ans
+   - vous pouvez aussi générer votre relevé après avoir créé un compte sur le site XXXXXX
+   - à partir de 55 ans, il est aussi possible de prendre rendez-vous lien XXXX
 `

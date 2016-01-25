@@ -2,7 +2,7 @@
 // Licensed under the MIT License
 
 // Regroupe les utilitaires concernant la surcote
-package montant
+package pension
 
 
 func SurCotePourTrimestreSupplementaire() float32 {

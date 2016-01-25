@@ -7,50 +7,51 @@
 package main
 
 import (
-	"os"
 	"fmt"
+	"os"
 	"text/template"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/ObjectIsAdvantag/retraite/depart"
-	"github.com/ObjectIsAdvantag/retraite/montant"
+	"github.com/ObjectIsAdvantag/retraite/pension"
+	log "github.com/Sirupsen/logrus"
 )
 
+type InfosUser struct {
+	Naissance         string
+	DateRelevé        int
+	TrimestresCotisés int
+}
 
+func (infos InfosUser) sansRelevé() bool {
+	return (infos.TrimestresCotisés == 0) && (infos.DateRelevé == 0)
+}
 
 // Point d'entrée du programme
 func main() {
 	// Interroge l'utilisateur
 	log.Debugln("Demande des informations : start")
 	userData, _ := interrogerUtilisateur()
-	log.Debugln("Demande des informations : ok! ", userData.Naissance, userData.DateReleve, userData.TrimestresCostisés)
+	log.Debugln("Demande des informations : ok! ", userData.Naissance, userData.DateRelevé, userData.TrimestresCotisés)
 
 	// Calcule les données de départ en retraite
 	log.Debugln("CalculerDépartLégal : start")
 	infosLegales, _ := depart.CalculerDépartLégal(userData.Naissance)
 	log.Debugln("CalculerDépartLégal : ok! ", infosLegales)
 
-	log.Debugln("CalculerDépartTauxPleinThéorique : start")
-	departTauxPlein, _ := depart.CalculerDépartTauxPleinThéorique(userData.Naissance, userData.TrimestresCostisés, userData.DateReleve)
-	log.Debugln("CalculerDépartTauxPleinThéorique : ok! ", departTauxPlein)
-
 	// Génère le bilan
 	log.Debugln("Génération du bilan : start")
-	t, _ := template.New("bilan").Parse(TexteBilan)
-	data, err := preparerDonneesPourTemplate(userData, infosLegales, departTauxPlein)
-	if err != nil {
-		log.Fatalf("Le bilan n'a pas pu être généré, err: ", err)
+	if userData.sansRelevé() {
+		genererBilanSimple(userData, infosLegales)
+	} else {
+		genererBilanComplet(userData, infosLegales)
 	}
-	if err := t.Execute(os.Stdout, data); err != nil {
-		log.Fatalf("Le bilan n'a pas pu être généré, err: ", err)
-	}
-	log.Debugln("Génération du bilan : ok !")
-
+	log.Debugln("Génération du bilan : ok!")
 }
 
-// Première implémentation statique
+	// Première implémentation statique
 func interrogerUtilisateur() (InfosUser, error) {
-	return InfosUser{Naissance:"24/12/1971", TrimestresCostisés:87, DateReleve:2014}, nil
+	//return InfosUser{Naissance:"24/12/1971", TrimestresCotisés:87, DateReleve:2014}, nil
+	return InfosUser{Naissance: "24/12/1971", TrimestresCotisés: 0, DateRelevé: 0}, nil
 }
 
 func init() {
@@ -64,60 +65,95 @@ func init() {
 	log.SetLevel(log.DebugLevel)
 }
 
-func preparerDonneesPourTemplate(user InfosUser, dep depart.InfosDepartEnRetraite, tauxPlein depart.CalculDépart) (TemplateData, error) {
-	minDecote := CoeffRetraite {
-		Type: "décote",
-		Période: "trimestre",
-		Valeur: fmt.Sprintf("%.3f%%", montant.Default.Diminution),
+func genererBilanSimple(userData InfosUser, infos depart.InfosDepartEnRetraite) {
+	log.Debugln("genererBilanSimple : start")
+
+	t, _ := template.New("BilanSimple").Funcs(template.FuncMap{
+		"timeToString": depart.TimeToString,
+	}).Parse(BilanSimple)
+
+	data := TemplateSimpleData{
+		User:userData,
+		Infos:infos,
+		MinTrimestres:0,
+		MinDecote:"0",
 	}
-	dateRelevé, err := depart.CalculerDateReleve(user.DateReleve)
+
+	if err := t.Execute(os.Stdout, data); err != nil {
+		log.Fatalf("Le bilan n'a pas pu être généré, err: ", err)
+	}
+	log.Debugln("genererBilanSimple : ok !")
+}
+
+func genererBilanComplet(userData InfosUser, infos depart.InfosDepartEnRetraite) {
+	log.Debugln("genererBilanComplet : start")
+	t, _ := template.New("BilanComplet").Parse(BilanComplet)
+	log.Debugln("CalculerDépartTauxPleinThéorique : start")
+	departTauxPlein, _ := depart.CalculerDépartTauxPleinThéorique(userData.Naissance, userData.TrimestresCotisés, userData.DateRelevé)
+	log.Debugln("CalculerDépartTauxPleinThéorique : ok! ", departTauxPlein)
+	data, err := preparerDonneesPourTemplate(userData, infos, departTauxPlein)
 	if err != nil {
-		log.Debugf("Impossible de calculer le nombre de trimestres cotisés, à cause du relevé, err: %v", err)
+		log.Fatalf("Le bilan n'a pas pu être généré, err: ", err)
+	}
+	if err := t.Execute(os.Stdout, data); err != nil {
+		log.Fatalf("Le bilan n'a pas pu être généré, err: ", err)
+	}
+	log.Debugln("genererBilanComplet : ok !")
+}
+
+func preparerDonneesPourTemplate(user InfosUser, dep depart.InfosDepartEnRetraite, tauxPlein depart.CalculDépart) (TemplateData, error) {
+
+	dateRelevé, err := depart.CalculerDateReleve(user.DateRelevé)
+	if err != nil {
+		log.Debugf("Impossible de calculer le nombre de trimestres cotisés, à cause de la date du relevé: %v, err: %v", user.DateRelevé, err)
 		return TemplateData{}, fmt.Errorf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
 	}
+
 	delta, err := depart.CalculerDurée(dateRelevé, dep.DateDépartMin)
 	if err != nil {
 		log.Debugf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
 		return TemplateData{}, fmt.Errorf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
 	}
-	minCotises := int(delta.EnMois() / 4) + user.TrimestresCostisés
-	minManquants := dep.TrimestresTauxPlein - minCotises
-	//var dateMinManquants time.Time
-	var minMontantDecote float32
-	if minManquants <= 20 {
-		minMontantDecote, _ = montant.DécotePourTrimestresManquants(minManquants, user.Naissance)
-		//dateMinManquants
-	} else {
-		minMontantDecote, _ =  montant.DécotePourTrimestresManquants(20, user.Naissance)
-		//dateMinManquants
+	departMinTrimestresCotises := int(delta.AgeEnMoisFloat()/4) + user.TrimestresCotisés
+	departMinTrimestresManquants := dep.TrimestresTauxPlein - departMinTrimestresCotises
+
+	calcul := pension.DécotePourTrimestresManquants(departMinTrimestresManquants, user.Naissance)
+
+	//MontantCote: fmt.Sprintf("%.3f%%", minMontantDecote),
+
+	//Valeur: fmt.Sprintf("%.3f%%", pension.Default.Diminution),
+
+	min := InfosDepartMin{
+		InfosDepart: InfosDepart{
+			DateDépart:        depart.TimeToString(dep.DateDépartMin),
+			AgeDépart:         dep.AgeDépartMin,
+			TrimestresCotisés: departMinTrimestresCotises,
+		},
+		TrimestresManquants: departMinTrimestresManquants,
+		Decote:              calcul,
 	}
 
-	min := InfosDepart{
-		DateDépart: depart.TimeToString(dep.DateDépartMin),
-		AgeDépart: dep.AgeDépartMin,
-		TrimestresCotisés: minCotises,
-		TrimestresManquants: minManquants,
-		Cote: minDecote,
-		MontantCote: fmt.Sprintf("%.3f%%", minMontantDecote),
-	}
+	/*
+		std := CoeffRetraite {
+			Type: "taux plein",
+			Période: "aucune",
+			Valeur: "0%",
+		}
 
-	std := CoeffRetraite {
-		Type: "taux plein",
-		Période: "aucune",
-		Valeur: "0%",
-	}
-	plein := InfosDepart{
-		DateDépart: depart.TimeToString(tauxPlein.Date),
-		AgeDépart: tauxPlein.Age,
-		TrimestresCotisés: tauxPlein.TrimestresCotisés,
-		TrimestresManquants: tauxPlein.TrimestresRestants,
-		Cote: std,
-	}
+		plein := InfosDepart{
+			DateDépart: depart.TimeToString(tauxPlein.Date),
+			AgeDépart: tauxPlein.Age,
+			TrimestresCotisés: tauxPlein.TrimestresCotisés,
+			TrimestresManquants: tauxPlein.TrimestresRestants,
+			Cote: std,
+		}
+	*/
 
 	return TemplateData{
-		User:user,
-		DepartMin:min,
-		TauxPlein:plein,
+		User:      user,
+		Infos:     dep,
+		DepartMin: min,
+		//TauxPlein:plein,
 	}, nil
 
 }

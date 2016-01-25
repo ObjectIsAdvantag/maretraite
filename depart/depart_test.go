@@ -84,10 +84,7 @@ func TestCalculerDonnesRetraiteTauxPleinPourMoi(t *testing.T) {
 	}
 
 	expDateTauxPlein := "1/1/2036"
-	comp, err := TimeToString(res.Date)
-	if err != nil {
-		t.Errorf("erreur calcul de la date de départ effectif à taux plein min, cannot parse date: %s", res.Date)
-	}
+	comp := TimeToString(res.Date)
 	if comp != expDateTauxPlein {
 		t.Errorf("erreur calcul de la date de départ effectif à taux plein min: %s contre %s attendu", comp, expDateTauxPlein)
 	}
@@ -140,10 +137,7 @@ func TestCalculerDonnesRetraiteTauxPleinPourValérie(t *testing.T) {
 	}
 
 	expDateTauxPlein := "1/10/2040"
-	comp, err := TimeToString(res.Date)
-	if err != nil {
-		t.Errorf("erreur calcul de la date de départ effectif à taux plein min, cannot parse date: %s", res.Date)
-	}
+	comp := TimeToString(res.Date)
 	if comp != expDateTauxPlein {
 		t.Errorf("erreur calcul de la date de départ effectif à taux plein min: %s contre %s attendu", comp, expDateTauxPlein)
 	}

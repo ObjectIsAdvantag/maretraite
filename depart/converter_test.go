@@ -43,10 +43,7 @@ func TestParseUnparse(t *testing.T) {
 	if tmpDate, err = StringToTime(input); err != nil {
 		t.Errorf("parse error, parse then unparse for: %s, err: %s", input, err)
 	}
-	var output string
-	if output, err = TimeToString(tmpDate); err != nil {
-		t.Errorf("parse error, parse then unparse for: %s, err: %s", input, err)
-	}
+	output := TimeToString(tmpDate)
 	if output != input {
 		t.Errorf("parse error, string: %s parsed then unparse as: %s", input, output)
 	}

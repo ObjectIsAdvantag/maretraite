@@ -337,3 +337,74 @@ func Test16(t *testing.T) {
 		t.Errorf("calculer age error, depuis: %s, jusque:%s, attendu: %s, obtenu: %s", depuis, jusque, expected, age)
 	}
 }
+
+
+func TestAgeEnAnneesMois1(t *testing.T) {
+	age := AnneesMoisJours{64, 0, 0}
+
+	res := age.AgeEnAnneesMois()
+	expected := "64 ans"
+	if res != expected {
+		t.Errorf("générer age en années/mois attendu: %s, obtenu: %s", expected, res)
+	}
+}
+
+func TestAgeEnAnneesMois2(t *testing.T) {
+	age := AnneesMoisJours{64, 11, 0}
+
+	res := age.AgeEnAnneesMois()
+	expected := "64 ans et 11 mois"
+	if res != expected {
+		t.Errorf("générer age en années/mois attendu: %s, obtenu: %s", expected, res)
+	}
+}
+
+func TestAgeEnAnneesMois3(t *testing.T) {
+	age := AnneesMoisJours{1, 1, 0}
+
+	res := age.AgeEnAnneesMois()
+	expected := "1 an et 1 mois"
+	if res != expected {
+		t.Errorf("générer age en années/mois attendu: %s, obtenu: %s", expected, res)
+	}
+}
+
+func TestAgeEnAnneesMois4(t *testing.T) {
+	age := AnneesMoisJours{0, 1, 0}
+
+	res := age.AgeEnAnneesMois()
+	expected := "1 mois"
+	if res != expected {
+		t.Errorf("générer age en années/mois attendu: %s, obtenu: %s", expected, res)
+	}
+}
+
+func TestAgeEnAnneesMois5(t *testing.T) {
+	age := AnneesMoisJours{64, 10, 5}
+
+	res := age.AgeEnAnneesMois()
+	expected := "64 ans et 10 mois"
+	if res != expected {
+		t.Errorf("générer age en années/mois attendu: %s, obtenu: %s", expected, res)
+	}
+}
+
+func TestAgeEnAnneesMois6(t *testing.T) {
+	age := AnneesMoisJours{64, 10, 15}
+
+	res := age.AgeEnAnneesMois()
+	expected := "64 ans et 10 mois"
+	if res != expected {
+		t.Errorf("générer age en années/mois attendu: %s, obtenu: %s", expected, res)
+	}
+}
+
+func TestAgeEnAnneesMois7(t *testing.T) {
+	age := AnneesMoisJours{64, 10, 25}
+
+	res := age.AgeEnAnneesMois()
+	expected := "64 ans et 10 mois"
+	if res != expected {
+		t.Errorf("générer age en années/mois attendu: %s, obtenu: %s", expected, res)
+	}
+}

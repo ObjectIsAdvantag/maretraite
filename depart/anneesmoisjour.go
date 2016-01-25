@@ -11,6 +11,8 @@ package depart
 import (
 	"fmt"
 	"time"
+	"bytes"
+	"strconv"
 )
 
 // Le type AnneesMois représente une date sous la forme d'un nombre d'années, de mois et de jour
@@ -22,13 +24,58 @@ type AnneesMoisJours struct {
 }
 
 // Retourne la valeur en années
-func (amj AnneesMoisJours) EnAnnees() float32 {
+func (amj AnneesMoisJours) AgeEnAnneesFloat() float32 {
 	return float32(amj.Annees) + float32(amj.Mois)/12 + float32(amj.Jours/365)
 }
 
 // Retourne la valeur en mois
-func (amj AnneesMoisJours) EnMois() float32 {
+func (amj AnneesMoisJours) AgeEnMoisFloat() float32 {
 	return float32(amj.Annees*12) + float32(amj.Mois) + float32(amj.Jours/365*12)
+}
+
+// Retourne la valeur en années
+// exemple : 44,3 ans
+func (amj AnneesMoisJours) AgeEnAnneesVirguleMois() string {
+	return fmt.Sprintf("%.1f", amj.AgeEnAnneesFloat()) + " ans"
+}
+
+
+// Retourne la valeur en années
+// exemple : 44 ans
+func (amj AnneesMoisJours) AgeEnAnnees() string {
+	return string(int(amj.AgeEnAnneesFloat())) + " ans"
+}
+
+// Retourne la valeur en années et en mois
+// exmple : 44 ans et 2 mois
+func (amj AnneesMoisJours) AgeEnAnneesMois() string {
+	var buffer bytes.Buffer
+
+	initié := false
+	switch amj.Annees {
+		case 0:
+
+		case 1 :
+			buffer.WriteString("1 an")
+			initié = true
+
+		default:
+			buffer.WriteString(strconv.Itoa(amj.Annees))
+			buffer.WriteString(" ans")
+			initié = true
+	}
+
+	mois := float32(amj.Mois) + float32(amj.Jours/365*12)
+	if mois > 0 {
+		if initié {
+			buffer.WriteString(" et ")
+		}
+
+		buffer.WriteString(strconv.Itoa(int(mois)))
+		buffer.WriteString(" mois")
+	}
+
+	return buffer.String()
 }
 
 // Crée un nouvel objet de type time.Time pour l' AnneesMoisJours spécifié
