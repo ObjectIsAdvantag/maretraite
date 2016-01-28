@@ -36,7 +36,7 @@ type InfosDepartMin struct {
 
 
 
-var BilanComplet  = `
+var BilanReleveDeCarriere  = `
 Vos données personnelles :
 - vous êtes né le {{ .User.Naissance }}
 - à fin {{ .User.DateReleve }}, vous aviez acquis {{ .User.TrimestresCotisés }} trimestres

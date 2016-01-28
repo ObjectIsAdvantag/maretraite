@@ -25,7 +25,7 @@ type Simulation struct {
 	TauxPension         float32
 }
 
-var BilanSimple = `
+var BilanDateDeNaissance = `
 ********************************************************************************
 Ce bilan vous est proposé gratuitement, sans publicité ni exploitation des données renseignées.
 Il a pour objectif de vous aider à appréhender les enjeux principaux de votre future pension.

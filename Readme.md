@@ -4,20 +4,19 @@
 Des outils qui vous permettront de vous éclairer quant à votre future retraite, 
 si vous êtes dans le cas d'un salarié du privé qui a cotisé au régime général.
 
-Les calculs sont développés en language Go ou encore #golang. [Un tutoriel](https://gist.github.com/leg0ffant/3bee4829ce2ad8fd026c#file-golang-fr-md) en français pour découvrir le langage.
-
 Vous pouvez utiliser ce projet :
-- [x] ou à partir de la CLI (en cours) : [télécharger] et exécuter sur votre poste
+- [x] ou à partir de la CLI (en cours) : [télécharger](https://github.com/ObjectIsAdvantag/retraite/releases) un exécutable pour votre plateforme,
 - [X] à partir du code GO, et en adaptant l'exemple placé dans depart_test.go, avec vos données personnelles,
-- [ ] ou encore à partir de la WebAPI (non implémenté)
+- [ ] ou encore à partir de la WebAPI (non implémenté).
 
 
 # Pourquoi ce projet ?
 
-Nous sommes en Janvier 2016, je viens d'avoir 44 ans, et je ne trouve pas d'outil simple pour connaître ma date estimée de départ en retraite à taux plein, ni pour calculer le montant de ma future retraite selon que je parte à l'âge minimal, ou lorsque j'ai atteint le taux plein, à moins d'ailleurs que je n'atteigne l'âge automatique de départ en retraite avant cette date.
+Nous sommes en Janvier 2016, je viens d'avoir 44 ans, et je ne trouve pas d'outil simple pour déterminer ma date estimée de départ en retraite à taux plein, ni pour calculer le montant de ma future pension en fonction de ma date de départ en retraite. 
 
-Relevant du régime général, je pensais qu'à partir de mon dernier relevé de carrière AGIRC/ARCO, il devait être possible de faire rapidement une simulation de dates et de montants.
-Sur ce dernier point, je ne parle pas d'un montant ferme qui nécessiterait des saisies exhaustives de données, mais d'une rapide estimation sur la base de critères simples (du type je continue à travailler au même rythme, je continue à gagner la même somme d'argent).
+Relevant du régime général, je pensais qu'à partir de mon dernier relevé de carrière AGIRC/ARCO, il devrait être possible de faire rapidement une simulation de dates et de montants.
+Je ne parle pas d'un montant - ferme à date - qui nécessiterait de laborieuses saisies de données, mais d'une rapide estimation sur la base de critères simples, 
+du type : - je continue à travailler à plein temps, - je perçois une rémunération identique ...
 
 Des recherche sur Google m'orientent vers des calculateurs complexes où je dois resaisir mon relevé de carrière, ou vers des pages simples mais sans API, enfin une recherche sur Github rapporte 5 résultats avec le mot clef Retraite (spirituel ou des projets de site).
 
@@ -43,9 +42,16 @@ Bref, c'est le moment d'apporter "my 2 euros..." en proposant un outil qui offre
 
 # Pour les développeurs 
 
-git clone
+Pré-requis : disposer d'un environnement Go, 
+[un tutoriel](https://gist.github.com/leg0ffant/3bee4829ce2ad8fd026c#file-golang-fr-md) en français pour découvrir le langage.
 
-puis 
+``` bash
+> git clone https://github.com/ObjectIsAdvantag/retraite
+> cd retraite
+> make
+> 
+```
+
 
 ## Consulter mes conditions de départ en retraite
 
@@ -67,21 +73,19 @@ fmt.Printf("SANS interruption de cotisations, vous pourriez partir avec un taux 
 
 ## Simuler le montant de sa future cotision retraite
 
-Le dev est à peine initié. 
+Les algos permettent de calculer une décôte pour un nombre de trimestres manquants.
 
 Je m'interroge sur la meilleure façon de présenter une information rapidement.
+Aussi, j'attendrais d'avoir des contributions sur ce sujet, notamment de la part de conseillers en retraite.
 
-Aussi, j'attendrais d'avoir des contributions sur ce sujet de la part notamment de conseillers en retraite
-
-En attendant, voici un pointeur utile : 
-Voir https://www.lassuranceretraite.fr/portail-info/home/salaries/age-et-montant-de-ma-retraite/quel-sera-montant-ma-retraite/le-calcul-en-detail.html
+En attendant, voici un pointeur utile : https://www.lassuranceretraite.fr/portail-info/home/salaries/age-et-montant-de-ma-retraite/quel-sera-montant-ma-retraite/le-calcul-en-detail.html
 
 
-## DISCLAIMER
+## Disclaimer
  
-Le code source a la particularité d'être "orienté français" de part les informations manipulées (types, fonctions, variables). 
+Le code source a la particularité d'être "orienté français" avec accentutation (types, fonctions, variables). 
 
-C'est une expérience intéressante et bizarre à la fois...
+C'est une expérience intéressante et parfois bizarre...
 
 
 # License

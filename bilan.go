@@ -70,7 +70,7 @@ func genererBilanSimple(userData InfosUser, infos depart.InfosDepartEnRetraite) 
 
 	t, _ := template.New("BilanSimple").Funcs(template.FuncMap{
 		"timeToString": depart.TimeToString,
-	}).Parse(BilanSimple)
+	}).Parse(BilanDateDeNaissance)
 
 	decote := pension.DécotePourTrimestresManquants(infos.TrimestresTauxPlein - pension.DECOTE_MAX_TRIMESTRES, userData.Naissance)
 	simu := Simulation {
@@ -97,7 +97,7 @@ func genererBilanSimple(userData InfosUser, infos depart.InfosDepartEnRetraite) 
 
 func genererBilanComplet(userData InfosUser, infos depart.InfosDepartEnRetraite) {
 	log.Debugln("genererBilanComplet : start")
-	t, _ := template.New("BilanComplet").Parse(BilanComplet)
+	t, _ := template.New("BilanComplet").Parse(BilanReleveDeCarriere)
 	log.Debugln("CalculerDépartTauxPleinThéorique : start")
 	departTauxPlein, _ := depart.CalculerDépartTauxPleinThéorique(userData.Naissance, userData.TrimestresCotisés, userData.DateRelevé)
 	log.Debugln("CalculerDépartTauxPleinThéorique : ok! ", departTauxPlein)
