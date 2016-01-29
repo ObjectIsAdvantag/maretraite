@@ -49,7 +49,7 @@ func init() {
 	Default.Diminution = 0.625
 
 	Default.Taux[0] = 50
-	Default.Taux[1] = 49.3125
+	Default.Taux[1] = 49.375
 	Default.Taux[2] = 48.750
 	Default.Taux[3] = 48.125
 	Default.Taux[4] = 47.500

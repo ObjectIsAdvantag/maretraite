@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const JJMMAAADateFormat = "2/1/2006"
+const JJMMAAADateFormat = "02/01/2006"
 
 var ErrDateVide = errors.New("la date n'est pas renseignée")
 var ErrDateFormatInvalide = errors.New("le format de date n'est pas valide")

@@ -5,7 +5,7 @@
 package pension
 
 
-func SurCotePourTrimestreSupplementaire() float32 {
+func SurcotePourTrimestreSupplementaire() float32 {
 	// Taux unique depuis 2008
-	return 1.25
+	return 0.625
 }
