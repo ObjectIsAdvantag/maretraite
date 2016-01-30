@@ -5,8 +5,8 @@
 package main
 
 import (
-	"github.com/ObjectIsAdvantag/retraite/depart"
-	"github.com/ObjectIsAdvantag/retraite/pension"
+	"github.com/ObjectIsAdvantag/maretraite/depart"
+	"github.com/ObjectIsAdvantag/maretraite/pension"
 
 )
 

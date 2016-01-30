@@ -11,21 +11,21 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/ObjectIsAdvantag/retraite/depart"
-	"github.com/ObjectIsAdvantag/retraite/pension"
+	"github.com/ObjectIsAdvantag/maretraite/depart"
+	"github.com/ObjectIsAdvantag/maretraite/pension"
 	log "github.com/Sirupsen/logrus"
 )
 
 type InfosUser struct {
 	Naissance         string
-	DateRelevé        int
+	AnnéeRelevé        int
 	TrimestresCotisés int
 }
 
 const version = "v0.1"
 
 func (infos InfosUser) sansRelevé() bool {
-	return (infos.TrimestresCotisés == 0) && (infos.DateRelevé == 0)
+	return (infos.TrimestresCotisés == 0) && (infos.AnnéeRelevé == 0)
 }
 
 // Point d'entrée du programme
@@ -38,11 +38,11 @@ func main() {
 		fmt.Println("Données incorrectes, le bilan ne peut être généré.\nEssayez à nouveau...")
 		os.Exit(-1)
 	}
-	log.Debugln("Demande des informations : ok! ", userData.Naissance, userData.DateRelevé, userData.TrimestresCotisés)
+	log.Debugln("Demande des informations : ok! ", userData.Naissance, userData.AnnéeRelevé, userData.TrimestresCotisés)
 
 	// Calcule les données de départ en retraite
 	log.Debugln("CalculerDépartLégal : start")
-	infosLegales, _ := depart.CalculerDépartLégal(userData.Naissance)
+	infosLegales, _ := depart.CalculerInfosLégales(userData.Naissance)
 	log.Debugln("CalculerDépartLégal : ok! ", infosLegales)
 
 	// Génère le bilan
@@ -98,7 +98,7 @@ Copyright 2016, Stève Sfartz - @ObjectIsAdvantag - License MIT - %s
 	// TODO Relevé de carrière
 	//return InfosUser{Naissance:"24/12/1971", TrimestresCotisés:87, DateReleve:2014}, nil
 
-	return InfosUser{Naissance: naissance, TrimestresCotisés: 0, DateRelevé: 0}, nil
+	return InfosUser{Naissance: naissance, TrimestresCotisés: 0, AnnéeRelevé: 0}, nil
 }
 
 func init() {
@@ -155,7 +155,7 @@ func genererBilanComplet(userData InfosUser, infos depart.InfosDepartEnRetraite)
 	log.Debugln("genererBilanComplet : start")
 	t, _ := template.New("BilanComplet").Parse(BilanReleveDeCarriere)
 	log.Debugln("CalculerDépartTauxPleinThéorique : start")
-	departTauxPlein, _ := depart.CalculerDépartTauxPleinThéorique(userData.Naissance, userData.TrimestresCotisés, userData.DateRelevé)
+	departTauxPlein, _ := depart.CalculerDépartTauxPlein(userData.Naissance, userData.TrimestresCotisés, userData.AnnéeRelevé)
 	log.Debugln("CalculerDépartTauxPleinThéorique : ok! ", departTauxPlein)
 	data, err := preparerDonneesPourTemplate(userData, infos, departTauxPlein)
 	if err != nil {
@@ -169,18 +169,19 @@ func genererBilanComplet(userData InfosUser, infos depart.InfosDepartEnRetraite)
 
 func preparerDonneesPourTemplate(user InfosUser, dep depart.InfosDepartEnRetraite, tauxPlein depart.CalculDépart) (TemplateData, error) {
 
-	dateRelevé, err := depart.CalculerDateReleve(user.DateRelevé)
+	dateRelevé, err := depart.VérifierRelevé(user.AnnéeRelevé)
 	if err != nil {
-		log.Debugf("Impossible de calculer le nombre de trimestres cotisés, à cause de la date du relevé: %v, err: %v", user.DateRelevé, err)
+		log.Debugf("Impossible de calculer le nombre de trimestres cotisés, à cause de la date du relevé: %v, err: %v", user.AnnéeRelevé, err)
 		return TemplateData{}, fmt.Errorf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
 	}
 
-	delta, err := depart.CalculerDurée(dateRelevé, dep.DateDépartMin)
+	nbTrimestresRestants, err := depart.NombreDeTrimestresEntre(dateRelevé, dep.DateDépartMin)
 	if err != nil {
-		log.Debugf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
+		log.Debugf("Impossible de calculer le nombre de trimestres cotisés, à cause de la date du relevé: %v, err: %v", user.AnnéeRelevé, err)
 		return TemplateData{}, fmt.Errorf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
 	}
-	departMinTrimestresCotises := int(delta.AgeEnMoisFloat()/4) + user.TrimestresCotisés
+
+	departMinTrimestresCotises := nbTrimestresRestants + user.TrimestresCotisés
 	departMinTrimestresManquants := dep.TrimestresTauxPlein - departMinTrimestresCotises
 
 	calcul := pension.DécotePourTrimestresManquants(departMinTrimestresManquants, user.Naissance)

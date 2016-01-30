@@ -10,21 +10,21 @@ import (
 
 func TestHorsLimitesInf(t *testing.T) {
 	naissance := "19/01/1890"
-	if _, err := CalculerDépartLégal(naissance); err != ErrDateLimites {
+	if _, err := CalculerInfosLégales(naissance); err != ErrDateLimites {
 		t.Errorf("parse error, under limit for: %s, err:", naissance, err)
 	}
 }
 
 func TestHorsLimitesInfSup(t *testing.T) {
 	naissance := "19/01/2017"
-	if _, err := CalculerDépartLégal(naissance); err != ErrDateLimites {
+	if _, err := CalculerInfosLégales(naissance); err != ErrDateLimites {
 		t.Errorf("parse error, over limit for: %s, err:", naissance, err)
 	}
 }
 
 func TestCalculerInfosDeDepartRetaitePourMoi(t *testing.T) {
 	naissance := "24/12/1971"
-	res, err := CalculerDépartLégal(naissance)
+	res, err := CalculerInfosLégales(naissance)
 	if err != nil {
 		t.Errorf("impossible de calculer les informations de départ en retraite, error: %s", err)
 		return
@@ -68,7 +68,7 @@ func TestCalculerInfosDeDepartRetaitePourMoi(t *testing.T) {
 
 func TestCalculerDonnesRetraiteTauxPleinPourMoi(t *testing.T) {
 	naissance := "24/12/1971"
-	res, err := CalculerDépartTauxPleinThéorique(naissance, 87, 2014)
+	res, err := CalculerDépartTauxPlein(naissance, 87, 2014)
 	if err != nil {
 		t.Errorf("Impossible de calculer les conditions de départ à taux plein, err: %s", err)
 		return
@@ -83,7 +83,7 @@ func TestCalculerDonnesRetraiteTauxPleinPourMoi(t *testing.T) {
 		t.Errorf("erreur calcul de l'age de départ effectif à taux plein min: date vide")
 	}
 
-	expDateTauxPlein := "1/1/2036"
+	expDateTauxPlein := "01/01/2036"
 	comp := TimeToString(res.Date)
 	if comp != expDateTauxPlein {
 		t.Errorf("erreur calcul de la date de départ effectif à taux plein min: %s contre %s attendu", comp, expDateTauxPlein)
@@ -92,7 +92,7 @@ func TestCalculerDonnesRetraiteTauxPleinPourMoi(t *testing.T) {
 
 func TestCalculerInfosDeDepartRetaitePourValérie(t *testing.T) {
 	naissance := "04/07/1974"
-	res, err := CalculerDépartLégal(naissance)
+	res, err := CalculerInfosLégales(naissance)
 	if err != nil {
 		t.Errorf("impossible de calculer les informations de départ en retraite, error: %s", err)
 		return
@@ -108,7 +108,7 @@ func TestCalculerInfosDeDepartRetaitePourValérie(t *testing.T) {
 		t.Errorf("erreur calcul de l'age de départ min: %v contre %v attendu", res.AgeDépartMin, expAgeDepartMin)
 	}
 
-	expDateDepartMin, _ := StringToTime("4/07/2036")
+	expDateDepartMin, _ := StringToTime("04/07/2036")
 	if res.DateDépartMin != expDateDepartMin {
 		t.Errorf("erreur calcul de la date de départ min: %v contre %v attendu", res.DateDépartMin, expDateDepartMin)
 	}
@@ -121,7 +121,7 @@ func TestCalculerInfosDeDepartRetaitePourValérie(t *testing.T) {
 
 func TestCalculerDonnesRetraiteTauxPleinPourValérie(t *testing.T) {
 	naissance := "04/07/1974"
-	res, err := CalculerDépartTauxPleinThéorique(naissance, 69, 2014)
+	res, err := CalculerDépartTauxPlein(naissance, 69, 2014)
 	if err != nil {
 		t.Errorf("Impossible de calculer les conditions de départ à taux plein, err: %s", err)
 		return
@@ -136,7 +136,7 @@ func TestCalculerDonnesRetraiteTauxPleinPourValérie(t *testing.T) {
 		t.Errorf("erreur calcul de l'age de départ effectif à taux plein min: date vide")
 	}
 
-	expDateTauxPlein := "1/10/2040"
+	expDateTauxPlein := "01/10/2040"
 	comp := TimeToString(res.Date)
 	if comp != expDateTauxPlein {
 		t.Errorf("erreur calcul de la date de départ effectif à taux plein min: %s contre %s attendu", comp, expDateTauxPlein)

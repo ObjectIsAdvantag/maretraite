@@ -6,7 +6,7 @@
 package main
 
 import (
-	"github.com/ObjectIsAdvantag/retraite/depart"
+	"github.com/ObjectIsAdvantag/maretraite/depart"
 )
 
 // The structure used by the template

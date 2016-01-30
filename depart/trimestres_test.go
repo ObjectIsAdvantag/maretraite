@@ -15,7 +15,7 @@ func TestTrimestresPourMoi(t *testing.T) {
 	}
 
 	expected := 171
-	nombre, err := RechercherTrimestre(birthDate)
+	nombre, err := RechercherTauxPlein(birthDate)
 	if err != nil {
 		t.Errorf("get error in trimestre check")
 	}
@@ -32,9 +32,23 @@ func TestTrimestresPourValérie(t *testing.T) {
 	}
 
 	expected := 172
-	nombre, err := RechercherTrimestre(birthDate)
+	nombre, err := RechercherTauxPlein(birthDate)
 	if err != nil {
 		t.Errorf("get error in trimestre check")
+	}
+	if nombre != expected {
+		t.Errorf("mauvais nombre de trimestres: %d au lieu de %d", nombre, expected)
+	}
+}
+
+func TestNombreDeTrimestres(t *testing.T) {
+	depuis, _ := StringToTime("01/01/1994")
+	jusque, _ := StringToTime("01/01/2034")
+	expected := 120
+	nombre, err := NombreDeTrimestresEntre(depuis, jusque)
+
+	if err != nil {
+		t.Errorf("impossible de calculer le nombre de trimestres entre le %s et le %s\n", depuis, jusque)
 	}
 	if nombre != expected {
 		t.Errorf("mauvais nombre de trimestres: %d au lieu de %d", nombre, expected)

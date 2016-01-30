@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"fmt"
-	"github.com/ObjectIsAdvantag/retraite/depart"
+	"github.com/ObjectIsAdvantag/maretraite/depart"
 )
 
 var ErrTrimestresManquantsHorsLimites = fmt.Errorf("Les trimestres manquants doivent se situer entre 0 et 20")

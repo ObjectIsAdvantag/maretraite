@@ -52,7 +52,7 @@ var ErrDateRelevé = errors.New("Le date du relevé est incorrecte, ou date de p
 
 // Calcule les informations de départ légal à la retraite, à partir d'une date de naissance au format JJ/MM/AAAA
 // En cas d'erreur, retourne l'erreur ainsi qu'une structure InfosDepartLegal vide
-func CalculerDépartLégal(dateJJMMAAAA string) (InfosDepartEnRetraite, error) {
+func CalculerInfosLégales(dateJJMMAAAA string) (InfosDepartEnRetraite, error) {
 	date, err := parseDateNaissance(dateJJMMAAAA)
 	if err != nil {
 		return InfosDepartEnRetraite{}, err
@@ -62,7 +62,7 @@ func CalculerDépartLégal(dateJJMMAAAA string) (InfosDepartEnRetraite, error) {
 }
 
 func calculerDépartLégalInterne(dateNaissance time.Time) (InfosDepartEnRetraite, error) {
-	trimestres, err := RechercherTrimestre(dateNaissance)
+	trimestres, err := RechercherTauxPlein(dateNaissance)
 	if err != nil {
 		return InfosDepartEnRetraite{}, err
 	}
@@ -92,7 +92,7 @@ func calculerDépartLégalInterne(dateNaissance time.Time) (InfosDepartEnRetrait
 //    - que vous soyez en pleine activité depuis votre dernier relevé et jusqu'à votre départ en retraite
 //    - que vous ayez atteint l'âge minimal de départ en retraite pour votre année de naissance (voir fonction
 // Par ailleurs, vous pourrez partir à taux plein si l'âge retourné par cette fonction est supérieur à l'âge automatique à taux plein défini pour votre année de naissance
-func CalculerDépartTauxPleinThéorique(dateJJMMAAAA string, trimestresAcquis int, annéeDuRelevé int) (CalculDépart, error) {
+func CalculerDépartTauxPlein(dateJJMMAAAA string, trimestresAcquis int, annéeDuRelevé int) (CalculDépart, error) {
 	dateNaissance, err := parseDateNaissance(dateJJMMAAAA)
 	if err != nil {
 		return CalculDépart{}, err
@@ -108,7 +108,7 @@ func CalculerDépartTauxPleinThéorique(dateJJMMAAAA string, trimestresAcquis in
 	trimestresRestants := infosDepart.TrimestresTauxPlein - trimestresAcquis
 	anneesRestantes := int(trimestresRestants / 4)
 	moisRestants := 3*trimestresRestants - 12*anneesRestantes
-	dateRelevé, err := CalculerDateReleve(annéeDuRelevé)
+	dateRelevé, err := VérifierRelevé(annéeDuRelevé)
 	if err != nil {
 		return CalculDépart{}, err
 	}
@@ -128,7 +128,8 @@ func CalculerDépartTauxPleinThéorique(dateJJMMAAAA string, trimestresAcquis in
 	}, nil
 }
 
-func CalculerDateReleve(annéeDuRelevé int) (time.Time, error) {
+// Vérifie la date du relevé, et retourne la date à partir de laquelle les nouvelles cotisations débuteront
+func VérifierRelevé(annéeDuRelevé int) (time.Time, error) {
 	// Le relevé doit daté de moins de 20 ans
 	if annéeDuRelevé < time.Now().Year()-20 || annéeDuRelevé > time.Now().Year() {
 		return time.Time{}, ErrDateRelevé
@@ -153,3 +154,81 @@ func parseDateNaissance(dateJJMMAAA string) (time.Time, error) {
 	return dateNaissance, nil
 }
 
+
+// Calcule les conditions d'un départ en retraite à la date spécifiée
+// La date de naissance est au format DD/MM/AAAA.
+// Le nombre de trimestres tels qui apparaissent sur le relevé de situtation individuelle.
+// La date du relevé de situation individuelle (ligne "Salarié du régime général de sécurité sociale (CNAV) - ANNEE)
+// Ce calcul est théorique dans la mesure où il suppose que vous restiez en pleine activité depuis votre dernier relevé et jusqu'à votre départ en retraite
+//
+// Les résultats sont :
+//    - soit le départ n'est pas possible à la date indiquée, avec le motif (manque de trimestre ou age insuffisant)
+//    - si le départ est possible, les conditions sont détaillées (le taux de la pension)
+
+type DepartImpossible struct {
+	Motif string
+}
+
+func CalculerConditionsDepart(dateJJMMAAAA string, trimestresAcquis int, annéeDuRelevé int, depart time.Time) (CalculDépart, DepartImpossible, error) {
+	dateNaissance, err := parseDateNaissance(dateJJMMAAAA)
+	if err != nil {
+		return CalculDépart{}, DepartImpossible{}, err
+	}
+
+	infosDepart, err := calculerDépartLégalInterne(dateNaissance)
+	if err != nil {
+		return CalculDépart{}, DepartImpossible{}, err
+	}
+
+	// A-t-on atteint l'age de départ en retraite
+	if depart.Before(infosDepart.DateDépartMin) {
+		motif := fmt.Sprintf("Vous n'avez pas atteint %s, l'âge légal de départ en retraite pour votre année de naissance", infosDepart.AgeDépartMin.AgeEnAnnees())
+		return CalculDépart{}, DepartImpossible{Motif:motif}, nil
+	}
+
+	// A-t-on cotisé suffisamment de trimestre
+	if depart.Before(infosDepart.DateDépartMin) {
+		motif := fmt.Sprintf("Vous n'avez pas atteint %s, l'âge légal de départ en retraite pour votre année de naissance", infosDepart.AgeDépartMin.AgeEnAnnees())
+		return CalculDépart{}, DepartImpossible{Motif:motif}, nil
+	}
+
+	dateReleve, err := VérifierRelevé(annéeDuRelevé)
+	if err != nil {
+		return CalculDépart{}, DepartImpossible{}, err
+	}
+
+	_, err = NombreDeTrimestresEntre(dateNaissance, dateReleve)
+	if err != nil {
+		return CalculDépart{}, DepartImpossible{}, err
+	}
+
+	return CalculDépart{}, DepartImpossible{}, nil
+
+
+
+	/*
+		// La formule de calcul du départ à taux plein :
+		// DateDuRelevé (revue au 1er janvier de l'année suivante) + 4 * (TrimestresTauxPlein - TrimestresAcquisAlaDateDuRelevé)
+		trimestresRestants := infosDepart.TrimestresTauxPlein - trimestresAcquis
+		anneesRestantes := int(trimestresRestants / 4)
+		moisRestants := 3*trimestresRestants - 12*anneesRestantes
+		dateRelevé, err := calculerDateReleve(annéeDuRelevé)
+		if err != nil {
+			return CalculDépart{}, err
+		}
+		dateRetraiteTauxPlein := dateRelevé.AddDate(anneesRestantes, moisRestants, 0)
+
+		age, err := CalculerDurée(dateNaissance, dateRetraiteTauxPlein)
+		if err != nil {
+			return CalculDépart{}, err
+		}
+
+		return CalculDépart{
+			Taux:               TAUX_PLEIN,
+			Age:                age,
+			Date:               dateRetraiteTauxPlein,
+			TrimestresCotisés:  infosDepart.TrimestresTauxPlein,
+			TrimestresRestants: trimestresRestants,
+		}, nil
+		*/
+}

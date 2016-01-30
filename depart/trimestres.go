@@ -56,15 +56,15 @@ func init() {
 
 }
 
-// Cette fonction retourne le nombre de trimstres à cotiser pour la date de naissance spécifiée
+// Cette fonction retourne le nombre de trimestres à cotiser pour la date de naissance spécifiée
 // Le référentiel de trimestres par défaut est interrogé.
-func RechercherTrimestre(date time.Time) (int, error) {
-	if date.IsZero() {
+func RechercherTauxPlein(naissance time.Time) (int, error) {
+	if naissance.IsZero() {
 		return 0, ErrAppelFonctionIncorrect
 	}
 
 	for _, p := range refTrimestres.trimestres {
-		if isInPeriode(date.Year(), p.AnneeDebut, p.AnneeFin) {
+		if isInPeriode(naissance.Year(), p.AnneeDebut, p.AnneeFin) {
 			return p.Trimestres, nil
 		}
 	}
@@ -74,4 +74,15 @@ func RechercherTrimestre(date time.Time) (int, error) {
 
 func isInPeriode(annee int, min int, max int) bool {
 	return annee >= min && annee <= max
+}
+
+// La fonction CalculerTrimestres retourne le nombre de trimestres entre 2 dates
+func NombreDeTrimestresEntre(depuis time.Time, jusque time.Time) (int, error) {
+
+	delta, err := CalculerDurée(depuis, jusque)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(delta.AgeEnMoisFloat() / 4), nil
 }
