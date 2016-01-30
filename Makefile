@@ -2,8 +2,8 @@ GOFLAGS = -tags netgo
 GITHUB_ACCOUNT = ObjectIsAdvantag
 DOCKER_ACCOUNT = objectisadvantag
 CONFIG=-logtostderr=true -v=5
-PROGRAM=retraite
-PROJECT=github.com/$(GITHUB_ACCOUNT)/retraite
+PROGRAM=maretraite
+PROJECT=github.com/$(GITHUB_ACCOUNT)/maretraite
 
 default: all
 

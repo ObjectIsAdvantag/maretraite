@@ -6,7 +6,7 @@ MAINTAINER "Stève Sfartz" <steve.sfartz@gmail.com>
 # Copies the directory in which the docker build command is launched
 COPY . /deploy
 
-ENTRYPOINT ["/deploy/retraite"]
+ENTRYPOINT ["/deploy/maretraite"]
 
 
 

@@ -22,6 +22,8 @@ type InfosUser struct {
 	TrimestresCotisés int
 }
 
+const version = "v0.1"
+
 func (infos InfosUser) sansRelevé() bool {
 	return (infos.TrimestresCotisés == 0) && (infos.DateRelevé == 0)
 }
@@ -57,9 +59,9 @@ func main() {
 // Une erreur est retournée si aucune date de naissance n'est proposée
 func interrogerUtilisateur() (InfosUser, error) {
 	// Banner
-	fmt.Println(`
+	fmt.Printf(`
 ********************************************************************************
-Ce bilan vous est proposé gratuitement, sans publicité ni exploitation des données renseignées.
+Ce bilan vous est proposé gratuitement, sans publicité ni exploitation commerciale de vos données.
 Il a pour objectif de vous aider à appréhender les enjeux principaux de votre future pension.
 Nous vous souhaitons de vivre de beaux moments professionnels jusqu'à votre départ en retraite.
 
@@ -69,9 +71,10 @@ https://github.com/ObjectIsAdvantag/retraite/issues/1
 Si vous êtes développeur, n'hésitez pas à contribuer au projet :
 https://github.com/ObjectIsAdvantag/retraite
 
-Copyright 2016, Stève Sfartz - @ObjectIsAdvantag - License MIT
+Copyright 2016, Stève Sfartz - @ObjectIsAdvantag - License MIT - %s
 ********************************************************************************
-	`)
+
+`, version)
 
 	// Date de naissance
 	var naissance string
