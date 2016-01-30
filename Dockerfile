@@ -1,12 +1,12 @@
+# Ce Dockerfile expose la commande interactive de bilan retraite.
 FROM scratch
 
 MAINTAINER "Stève Sfartz" <steve.sfartz@gmail.com>
 
+# Copies the directory in which the docker build command is launched
 COPY . /deploy
 
-EXPOSE 8080
-
-ENTRYPOINT ["/deploy/retraite", "--port=8080"]
+ENTRYPOINT ["/deploy/retraite"]
 
 
 

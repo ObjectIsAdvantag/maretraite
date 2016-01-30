@@ -48,12 +48,11 @@ dist: linux
 	rm -rf dist
 	mkdir dist
 	cp $(PROGRAM) dist/
-	mkdir dist/logs
 	cp Dockerfile dist/
 
 .PHONY: docker
 docker: dist
-	cd dist; docker build -t $(DOCKER_ACCOUNT)/bilanretraite .
+	cd dist; docker build -t $(DOCKER_ACCOUNT)/maretraite .
 
 .PHONY: archive
 archive:

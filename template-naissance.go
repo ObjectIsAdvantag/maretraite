@@ -30,20 +30,20 @@ Votre bilan retraite simplifié suite à la réforme 2010 :
 - vous devrez cotiser {{ .Infos.TrimestresTauxPlein }} trimestres pour toucher une retraite à taux plein
    - une retraite à taux plein correspond à une pension de l'ordre de 50% de vos 25 meilleurs années.
 
-- vous partirez partir en retraite au plus tôt à {{ .Infos.AgeDépartMin.AgeEnAnneesMois }}, soit le {{ .Infos.DateDépartMin | timeToString }}
-   - date à laquelle vous devrez avoir cotisé un minmum de {{ .SimuDecote.Trimestres }} trimestres
+- vous pourrez partir en retraite au plus tôt à {{ .Infos.AgeDépartMin.AgeEnAnneesMois }}, le {{ .Infos.DateDépartMin | timeToString }}
+   - si vous avez avez cotisé {{ .SimuDecote.Trimestres }} trimestres au minimum
    - sans quoi vous devriez repousser votre demande de départ en retraite
 
    - principe de la décote :
-      - votre pension est diminuée de {{ .SimuDecote.EvolParTrimestre }} points par trimestre manquant par rapport aux taux plein
+      - votre pension est diminuée de {{ .SimuDecote.EvolParTrimestre }} points par trimestre manquant par rapport au taux plein
       - ex: vous demandez à partir en retraite après le {{ .Infos.DateDépartMin | timeToString }} et avez cotisé {{ .SimuDecote.Trimestres }} trimestres,
-            soient {{ .SimuDecote.DeltaTrimestres }} trimestres manquants par rapport au taux plein,
+            soient {{ .SimuDecote.DeltaTrimestres }} trimestres manquants par rapport au taux plein ({{ .Infos.TrimestresTauxPlein }} trimestres),
             votre pension serait alors de l'ordre de {{ .SimuDecote.TauxPension }}% de vos 25 meilleures années
 
    - principe de la surcote :
       - votre pension est augmentée de {{ .SimuSurcote.EvolParTrimestre }} points par trimestre supplémentaire cotisé
       - ex: vous demandez à partir en retraite après le {{ .Infos.DateDépartMin | timeToString }} et avez cotisé {{ .SimuSurcote.Trimestres }} trimestres,
-            soient {{ .SimuSurcote.DeltaTrimestres }} trimestres supplémentaires par rapport au taux plein,
+            soient {{ .SimuSurcote.DeltaTrimestres }} trimestres supplémentaires par rapport au taux plein ({{ .Infos.TrimestresTauxPlein }} trimestres),
             votre pension serait alors de l'ordre de {{ .SimuSurcote.TauxPension }}% de vos 25 meilleures années
 
 - à partir du {{ .Infos.DateTauxPleinAuto | timeToString }}, vous pourrez automatiquement bénéficier d'une retraite à taux plein,
