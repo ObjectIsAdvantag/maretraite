@@ -4,11 +4,48 @@
 Des outils qui vous permettront de vous éclairer quant à votre future retraite, 
 si vous êtes dans le cas d'un salarié du privé qui a cotisé au régime général.
 
-Vous pouvez utiliser ce projet :
-- [x] ou à partir de la CLI (en cours) : [télécharger](https://github.com/ObjectIsAdvantag/retraite/releases) un exécutable pour votre plateforme,
-- [X] à partir du code GO, et en adaptant l'exemple placé dans depart_test.go, avec vos données personnelles,
+Vous pouvez consulter votre bilan retraite :
+- [X] en lançant l' exécutable maretraite : [télécharger](https://github.com/ObjectIsAdvantag/maretraite/releases) pour linux, windows,
+- [X] via docker : docker pull objectisadvantag/maretraite; docker run -it objectisadvantag/maretraite
+- [X] à partir du code source : git clone https://github.com/ObjectIsAdvantag/maretraite; make
 - [ ] ou encore à partir de la WebAPI (non implémenté).
 
+## Exemple
+
+``` bash
+$ ./maretraite
+
+Votre date de naissance (JJ/MM/YYYY): 24/12/1971
+
+Votre bilan retraite simplifié suite à la réforme 2010 :
+
+- vous devrez cotiser 171 trimestres pour toucher une retraite à taux plein
+   - une retraite à taux plein correspond à une pension de l'ordre de 50% de vos 25 meilleurs années.
+
+- vous pourrez partir en retraite au plus tôt à 62 ans, le 24/12/2033
+   - si vous avez avez cotisé 151 trimestres au minimum
+   - sans quoi vous devriez repousser votre demande de départ en retraite
+
+   - principe de la décote :
+      - votre pension est diminuée de 0.625 points par trimestre manquant par rapport au taux plein
+      - ex: vous demandez à partir en retraite après le 24/12/2033 et avez cotisé 151 trimestres,
+            soient 20 trimestres manquants par rapport au taux plein (171 trimestres),
+            votre pension serait alors de l'ordre de 37.5% de vos 25 meilleures années
+
+   - principe de la surcote :
+      - votre pension est augmentée de 0.625 points par trimestre supplémentaire cotisé
+      - ex: vous demandez à partir en retraite après le 24/12/2033 et avez cotisé 179 trimestres,
+            soient 8 trimestres supplémentaires par rapport au taux plein (171 trimestres),
+            votre pension serait alors de l'ordre de 55% de vos 25 meilleures années
+
+- à partir du 24/12/2038, vous pourrez automatiquement bénéficier d'une retraite à taux plein,
+   - et ce, quelque soit votre nombre de trimestres cotisés,
+   - car vous aurez atteint l'âge légal de 67 ans
+
+- au delà du 24/12/2041 si vous n'avez toujours pas demandé à partir en retraite,
+   - votre employeur serait en droit de contraindre ce départ,
+   - et vous auriez alors 70 ans
+```
 
 # Pourquoi ce projet ?
 
@@ -23,7 +60,7 @@ Des recherche sur Google m'orientent vers des calculateurs complexes où je dois 
 Bref, c'est le moment d'apporter "my 2 euros..." en proposant un outil qui offre un aperçu de sa future retraite en moins de 5 minutes.
 
 
-# Ressources afférentes au domaine de la retraite
+# Ressources afférentes au départ et calcul de sa retraite
 
 ## Sites
 
@@ -46,14 +83,14 @@ Pré-requis : disposer d'un environnement Go,
 [un tutoriel](https://gist.github.com/leg0ffant/3bee4829ce2ad8fd026c#file-golang-fr-md) en français pour découvrir le langage.
 
 ``` bash
-> git clone https://github.com/ObjectIsAdvantag/retraite
-> cd retraite
+> git clone https://github.com/ObjectIsAdvantag/maretraite
+> cd maretraite
 > make
 > 
 ```
 
 
-## Consulter mes conditions de départ en retraite
+## Calculer des conditions de départ en retraite
 
 A partir de votre date de naissance, déterminez les dates importantes pour votre retraite :
 - l'âge minimal auquel vous pourrez prétendre à une retraite (soit parce que vous aurez suffisamment cotisé, soit via le rachat de trimestres)
@@ -71,7 +108,7 @@ fmt.Printf("SANS interruption de cotisations, vous pourriez partir avec un taux 
       calcul.Date, calcul.Age, calcul.TrimestresCotisés, calcul.TrimestresRestants)
 ```
 
-## Simuler le montant de sa future cotision retraite
+## Simuler le montant d'une future pension
 
 Les algos permettent de calculer une décôte pour un nombre de trimestres manquants.
 

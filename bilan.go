@@ -32,7 +32,7 @@ func main() {
 	log.Debugln("Demande des informations : start")
 	userData, err := interrogerUtilisateur()
 	if err != nil {
-		log.Errorf("Données incorrectes, le bilan ne peut être généré")
+		log.Infof("Données incorrectes, le bilan ne peut être généré")
 		fmt.Println("Données incorrectes, le bilan ne peut être généré.\nEssayez à nouveau...")
 		os.Exit(-1)
 	}
@@ -63,8 +63,11 @@ Ce bilan vous est proposé gratuitement, sans publicité ni exploitation des don
 Il a pour objectif de vous aider à appréhender les enjeux principaux de votre future pension.
 Nous vous souhaitons de vivre de beaux moments professionnels jusqu'à votre départ en retraite.
 
-Si vous êtes un conseiller Retraite, n'hésitez pas à soumettre vos idées (améliorations, correctifs...) : https://github.com/ObjectIsAdvantag/retraite/issues/1
-Si vous êtes développeur, n'hésitez pas à contribuer au projet https://github.com/ObjectIsAdvantag/retraite
+Si vous êtes un conseiller Retraite, n'hésitez pas à soumettre vos idées (améliorations, correctifs...) :
+https://github.com/ObjectIsAdvantag/retraite/issues/1
+
+Si vous êtes développeur, n'hésitez pas à contribuer au projet :
+https://github.com/ObjectIsAdvantag/retraite
 
 Copyright 2016, Stève Sfartz - @ObjectIsAdvantag - License MIT
 ********************************************************************************
@@ -86,7 +89,7 @@ Copyright 2016, Stève Sfartz - @ObjectIsAdvantag - License MIT
 		}
 
 		essai++
-		fmt.Printf("Saisie incorrecte, nouvel essai %d/%d\n", essai, essaiMax)
+		fmt.Printf("Saisie incorrecte, nouvel essai (%d/%d)\n", essai, essaiMax)
 	}
 
 	// TODO Relevé de carrière

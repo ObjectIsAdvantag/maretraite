@@ -50,9 +50,21 @@ dist: linux
 	cp $(PROGRAM) dist/
 	cp Dockerfile dist/
 
-.PHONY: docker
-docker: dist
+.PHONY: docker-build
+docker-build: dist
 	cd dist; docker build -t $(DOCKER_ACCOUNT)/maretraite .
+
+.PHONY: docker-push
+docker-push: docker-build
+	docker push $(DOCKER_ACCOUNT)/maretraite:latest
+
+.PHONY: docker-pull
+docker-pull:
+	docker pull $(DOCKER_ACCOUNT)/maretraite:latest
+
+.PHONY: docker-run
+docker-run: docker-pull
+	docker run -it $(DOCKER_ACCOUNT)/maretraite
 
 .PHONY: archive
 archive:
