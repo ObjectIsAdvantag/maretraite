@@ -119,11 +119,12 @@ func genererBilanSimple(userData InfosUser, infos depart.InfosDepartEnRetraite) 
 		"timeToString": depart.TimeToString,
 	}).Parse(BilanDateDeNaissance)
 
-	decote := pension.DécotePourTrimestresManquants(infos.TrimestresTauxPlein - pension.DECOTE_MAX_TRIMESTRES, userData.Naissance)
+	trimestresDecote := 16 // au maximum pension.DECOTE_MAX_TRIMESTRES = 20 trimestres
+	decote := pension.DécotePourTrimestresManquants(trimestresDecote, userData.Naissance)
 	simuDec := Simulation {
-		// la décôte est limitée à 20 trimestres
-		Trimestres:infos.TrimestresTauxPlein - pension.DECOTE_MAX_TRIMESTRES,
-		DeltaTrimestres:pension.DECOTE_MAX_TRIMESTRES,
+		// la décote est limitée à 20 trimestres
+		Trimestres:infos.TrimestresTauxPlein - trimestresDecote,
+		DeltaTrimestres:trimestresDecote,
 		EvolParTrimestre:fmt.Sprintf("%.3f", decote.Decote.Diminution),
 		TauxPension:decote.TauxPension,
 	}

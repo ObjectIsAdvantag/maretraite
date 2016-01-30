@@ -30,9 +30,9 @@ Votre bilan retraite simplifié suite à la réforme 2010 :
 - vous devrez cotiser {{ .Infos.TrimestresTauxPlein }} trimestres pour toucher une retraite à taux plein
    - une retraite à taux plein correspond à une pension de l'ordre de 50% de vos 25 meilleurs années.
 
-- vous pourrez partir en retraite au plus tôt à {{ .Infos.AgeDépartMin.AgeEnAnneesMois }}, le {{ .Infos.DateDépartMin | timeToString }}
-   - si vous avez avez cotisé {{ .SimuDecote.Trimestres }} trimestres au minimum
-   - sans quoi vous devriez repousser votre demande de départ en retraite
+- vous pourrez partir en retraite au plus tôt à {{ .Infos.AgeDépartMin.AgeEnAnneesMois }} (le {{ .Infos.DateDépartMin | timeToString }})
+   - et si vous avez cotisé au moins {{ .SimuDecote.Trimestres }} trimestres
+   - sans quoi vous devrez repousser votre demande de départ en retraite
 
    - principe de la décote :
       - votre pension est diminuée de {{ .SimuDecote.EvolParTrimestre }} points par trimestre manquant par rapport au taux plein
