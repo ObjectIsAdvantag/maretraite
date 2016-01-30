@@ -37,11 +37,11 @@ clean:
 
 .PHONY: linux
 linux:
-	GOOS=linux GOARCH=amd64 go build $(GOFLAGS) $(PROGRAM).go
+	GOOS=linux GOARCH=amd64 go build $(GOFLAGS)
 
 .PHONY: windows
 windows:
-	GOOS=windows GOARCH=amd64 go build $(GOFLAGS) $(PROGRAM).go
+	GOOS=windows GOARCH=amd64 go build $(GOFLAGS)
 
 .PHONY: dist
 dist: linux

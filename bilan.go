@@ -32,7 +32,8 @@ func main() {
 	log.Debugln("Demande des informations : start")
 	userData, err := interrogerUtilisateur()
 	if err != nil {
-		log.Errorf("Données incorrectes, le bilan ne peut être généré, essayez à nouveau...")
+		log.Errorf("Données incorrectes, le bilan ne peut être généré")
+		fmt.Println("Données incorrectes, le bilan ne peut être généré.\nEssayez à nouveau...")
 		os.Exit(-1)
 	}
 	log.Debugln("Demande des informations : ok! ", userData.Naissance, userData.DateRelevé, userData.TrimestresCotisés)
@@ -85,7 +86,7 @@ Copyright 2016, Stève Sfartz - @ObjectIsAdvantag - License MIT
 		}
 
 		essai++
-		fmt.Printf("Saisie incorrecte, nouvel essai %d/%d", essai, essaiMax)
+		fmt.Printf("Saisie incorrecte, nouvel essai %d/%d\n", essai, essaiMax)
 	}
 
 	// TODO Relevé de carrière
