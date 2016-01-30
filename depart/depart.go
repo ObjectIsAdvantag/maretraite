@@ -19,7 +19,8 @@ import (
 // La structure InfosDepartLegal regroupe les données légales relatives au départ à la retraite.
 // Cette structure est calculée à partir d'une date de naissance, voir la fonction CalculerDepartLegal
 type InfosDepartEnRetraite struct {
-	TrimestresTauxPlein int             `json:"nbTrimestres"`             // nombre de trimestres afin de disposer de sa retraite à taux plein
+	TrimestresMinimum	int				`json:"nbTrimestresMinimum"`      // nombre de trimestres cotisés au minimum afin de pouvoir partir en retraitei
+	TrimestresTauxPlein int             `json:"nbTrimestresTauxPlein"`    // nombre de trimestres afin de disposer de sa retraite à taux plein
 	AgeDépartMin        AnneesMoisJours `json:"ageDepartMinimum"`         // âge à partir duquel il est possible de percevoir une retraite, mais elle ne sera pas à taux plein si le nombre de trimestres cotisés n'est pas celui requis
 	DateDépartMin       time.Time       `json:"dateDepartMinimum"`        // date à partir de laquelle il est possible de percevoir une retraite
 	AgeTauxPleinAuto    AnneesMoisJours `json:"ageTauxPleinAutomatique"`  // âge à partir duquel il est possible de percevoir une retraite à taux plein même si le nombre de trimestres cotisés n'est pas suffisant
@@ -47,6 +48,8 @@ var ANNEE_NAISSANCE_MAX = time.Now().Year()
 const ANNEE_MIN = 0
 const ANNEE_MAX = 2100  // arbitrary limit, because we need one
 
+const NB_TRIMESTRES_MIN_SOUS_TAUX_PLEIN = 20
+
 var ErrDateLimites = errors.New("la date n'est pas entre le 01/01/1900 et aujourd'hui")
 var ErrDateRelevé = errors.New("Le date du relevé est incorrecte, ou date de plus de 20 ans")
 
@@ -73,6 +76,7 @@ func calculerDépartLégalInterne(dateNaissance time.Time) (InfosDepartEnRetrait
 	}
 
 	return InfosDepartEnRetraite{
+		TrimestresMinimum:	 trimestres - NB_TRIMESTRES_MIN_SOUS_TAUX_PLEIN,
 		TrimestresTauxPlein: trimestres,
 		AgeDépartMin:        ageLegal.AgeDepartMin,
 		DateDépartMin:		 DatePlusAge(dateNaissance, ageLegal.AgeDepartMin),
@@ -155,6 +159,10 @@ func parseDateNaissance(dateJJMMAAA string) (time.Time, error) {
 }
 
 
+type DepartImpossible struct {
+	Motif string
+}
+
 // Calcule les conditions d'un départ en retraite à la date spécifiée
 // La date de naissance est au format DD/MM/AAAA.
 // Le nombre de trimestres tels qui apparaissent sur le relevé de situtation individuelle.
@@ -164,11 +172,6 @@ func parseDateNaissance(dateJJMMAAA string) (time.Time, error) {
 // Les résultats sont :
 //    - soit le départ n'est pas possible à la date indiquée, avec le motif (manque de trimestre ou age insuffisant)
 //    - si le départ est possible, les conditions sont détaillées (le taux de la pension)
-
-type DepartImpossible struct {
-	Motif string
-}
-
 func CalculerConditionsDepart(dateJJMMAAAA string, trimestresAcquis int, annéeDuRelevé int, depart time.Time) (CalculDépart, DepartImpossible, error) {
 	dateNaissance, err := parseDateNaissance(dateJJMMAAAA)
 	if err != nil {
@@ -187,22 +190,26 @@ func CalculerConditionsDepart(dateJJMMAAAA string, trimestresAcquis int, annéeD
 	}
 
 	// A-t-on cotisé suffisamment de trimestre
-	if depart.Before(infosDepart.DateDépartMin) {
-		motif := fmt.Sprintf("Vous n'avez pas atteint %s, l'âge légal de départ en retraite pour votre année de naissance", infosDepart.AgeDépartMin.AgeEnAnnees())
-		return CalculDépart{}, DepartImpossible{Motif:motif}, nil
-	}
-
 	dateReleve, err := VérifierRelevé(annéeDuRelevé)
 	if err != nil {
 		return CalculDépart{}, DepartImpossible{}, err
 	}
-
-	_, err = NombreDeTrimestresEntre(dateNaissance, dateReleve)
+	trimestresComplementaires, err := NombreDeTrimestresEntre(dateReleve, depart)
 	if err != nil {
 		return CalculDépart{}, DepartImpossible{}, err
 	}
+	totalTrimestres := trimestresAcquis + trimestresComplementaires
+
+	if totalTrimestres < infosDepart.TrimestresMinimum {
+		motif := fmt.Sprintf("Vous n'aurez pas cotisé suffisamment de trimestres le %s, %d trimestres requis contre %d trimestres cotisés si vous n'avez pas d'interruption d'activité", TimeToString(depart),  totalTrimestres, infosDepart.TrimestresMinimum)
+		return CalculDépart{}, DepartImpossible{Motif:motif}, nil
+	}
+
+	// Calcul des conditions de départ
+	// TODO + Vérifier qu'il y a bien un nb mini de trimestres à cotiser
 
 	return CalculDépart{}, DepartImpossible{}, nil
+
 
 
 
