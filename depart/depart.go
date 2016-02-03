@@ -172,11 +172,20 @@ type DepartImpossible struct {
 // Les résultats sont :
 //    - soit le départ n'est pas possible à la date indiquée, avec le motif (manque de trimestre ou age insuffisant)
 //    - si le départ est possible, les conditions sont détaillées (le taux de la pension)
-func CalculerConditionsDepart(dateJJMMAAAA string, trimestresAcquis int, annéeDuRelevé int, depart time.Time) (CalculDépart, DepartImpossible, error) {
-	dateNaissance, err := parseDateNaissance(dateJJMMAAAA)
+func CalculerConditionsDepart(naissanceJJMMAAAA string, trimestresAcquis int, annéeDuRelevé int, departJJMMAAA string) (CalculDépart, DepartImpossible, error) {
+	dateNaissance, err := parseDateNaissance(naissanceJJMMAAAA)
 	if err != nil {
 		return CalculDépart{}, DepartImpossible{}, err
 	}
+	dateDepart, err := StringToTime(departJJMMAAA)
+	if err != nil {
+		return CalculDépart{}, DepartImpossible{}, err
+	}
+
+	return calculerConditionsDepartInternal(dateNaissance, trimestresAcquis, annéeDuRelevé, dateDepart)
+}
+
+func calculerConditionsDepartInternal(dateNaissance time.Time, trimestresAcquis int, annéeDuRelevé int, dateDepart time.Time) (CalculDépart, DepartImpossible, error) {
 
 	infosDepart, err := calculerDépartLégalInterne(dateNaissance)
 	if err != nil {
@@ -184,7 +193,7 @@ func CalculerConditionsDepart(dateJJMMAAAA string, trimestresAcquis int, annéeD
 	}
 
 	// A-t-on atteint l'age de départ en retraite
-	if depart.Before(infosDepart.DateDépartMin) {
+	if dateDepart.Before(infosDepart.DateDépartMin) {
 		motif := fmt.Sprintf("Vous n'avez pas atteint %s, l'âge légal de départ en retraite pour votre année de naissance", infosDepart.AgeDépartMin.AgeEnAnnees())
 		return CalculDépart{}, DepartImpossible{Motif:motif}, nil
 	}
@@ -194,14 +203,14 @@ func CalculerConditionsDepart(dateJJMMAAAA string, trimestresAcquis int, annéeD
 	if err != nil {
 		return CalculDépart{}, DepartImpossible{}, err
 	}
-	trimestresComplementaires, err := NombreDeTrimestresEntre(dateReleve, depart)
+	trimestresComplementaires, err := NombreDeTrimestresEntre(dateReleve, dateDepart)
 	if err != nil {
 		return CalculDépart{}, DepartImpossible{}, err
 	}
 	totalTrimestres := trimestresAcquis + trimestresComplementaires
 
 	if totalTrimestres < infosDepart.TrimestresMinimum {
-		motif := fmt.Sprintf("Vous n'aurez pas cotisé suffisamment de trimestres le %s, %d trimestres requis contre %d trimestres cotisés si vous n'avez pas d'interruption d'activité", TimeToString(depart),  totalTrimestres, infosDepart.TrimestresMinimum)
+		motif := fmt.Sprintf("Vous n'aurez pas cotisé suffisamment de trimestres le %s, %d trimestres requis contre %d trimestres cotisés si vous n'avez pas d'interruption d'activité", TimeToString(dateDepart),  infosDepart.TrimestresMinimum, totalTrimestres)
 		return CalculDépart{}, DepartImpossible{Motif:motif}, nil
 	}
 

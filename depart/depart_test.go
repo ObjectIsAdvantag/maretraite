@@ -5,6 +5,7 @@ package depart
 
 import (
 	"testing"
+	"log"
 )
 
 
@@ -141,4 +142,19 @@ func TestCalculerDonnesRetraiteTauxPleinPourValérie(t *testing.T) {
 	if comp != expDateTauxPlein {
 		t.Errorf("erreur calcul de la date de départ effectif à taux plein min: %s contre %s attendu", comp, expDateTauxPlein)
 	}
+}
+
+func TestCalculerConditionsDepartTropTot(t *testing.T) {
+	_, impossible, err := CalculerConditionsDepart("24/12/1971", 87, 2014, "24/12/2033")
+	if err != nil {
+		t.Errorf("Impossible de calculer les conditions de départ, should not happen")
+		return
+	}
+
+	if (impossible == DepartImpossible{}) {
+		t.Errorf("Erreur, le départ ne devrait pas être possible")
+		return
+	}
+
+	log.Println("Depart impossible : OK, motif %s", impossible.Motif)
 }
