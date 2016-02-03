@@ -165,16 +165,15 @@ func TestCalculerConditionsDepartTropTot(t *testing.T) {
 		return
 	}
 
-	log.Printf("Si vous êtes né le %s, et que vous avez cotisé %d trimestres à fin %d", dateNaissance, trimestresRelevé, dateRelevé)
-	log.Printf("vous ne pourrez pas partir en retraite le %s, motif %s", dateDepart, impossible.Motif)
+	//log.Printf("Si vous êtes né le %s, et que vous avez cotisé %d trimestres à fin %d", dateNaissance, trimestresRelevé, dateRelevé)
+	//log.Printf("vous ne pourrez pas partir en retraite le %s, motif %s", dateDepart, impossible.Motif)
 }
 
 func TestCalculerConditionsDepartPasAssezDeTrimestres(t *testing.T) {
-	dateDepart := "24/12/2033"
+	dateDepart := "24/12/2034"
 	dateNaissance := "24/12/1971"
-	trimestresRelevé := 87
+	trimestresRelevé := 70
 	dateRelevé := 2014
-	log.Printf("Si vous êtes né le %s, et que vous avez cotisé %d trimestres à fin %d", dateNaissance, trimestresRelevé, dateRelevé)
 	_, impossible, err := CalculerConditionsDepart(dateNaissance, trimestresRelevé, dateRelevé, dateDepart)
 	if err != nil {
 		t.Errorf("Impossible de calculer les conditions de départ, should not happen")
@@ -191,5 +190,33 @@ func TestCalculerConditionsDepartPasAssezDeTrimestres(t *testing.T) {
 		return
 	}
 
-	log.Printf("vous ne pourrez pas partir en retraite le %s, motif %s", dateDepart, impossible.Motif)
+	//log.Printf("Si vous êtes né le %s, et que vous avez cotisé %d trimestres à fin %d", dateNaissance, trimestresRelevé, dateRelevé)
+	//log.Printf("vous ne pourrez pas partir en retraite le %s, motif %s", dateDepart, impossible.Motif)
+}
+
+
+func TestCalculerConditionsDepartAvantTauxPlein(t *testing.T) {
+	dateDepart := "01/01/2034"
+	dateNaissance := "24/12/1971"
+	trimestresRelevé := 87
+	dateRelevé := 2014
+	conditionsDepart, impossible, err := CalculerConditionsDepart(dateNaissance, trimestresRelevé, dateRelevé, dateDepart)
+	if err != nil {
+		t.Errorf("Impossible de calculer les conditions de départ, should not happen")
+		return
+	}
+
+	if (impossible != DepartImpossible{}) {
+		t.Errorf("Erreur, le départ devrait être possible, code: %s, motif: %s", impossible.Code, impossible.Motif)
+		return
+	}
+
+	if conditionsDepart.Taux != TAUX_DECOTE {
+		t.Errorf("Erreur, le départ devrait correspondre à une décote")
+	}
+
+	//log.Printf("Si vous êtes né le %s, et que vous avez cotisé %d trimestres à fin %d", dateNaissance, trimestresRelevé, dateRelevé)
+	//log.Printf("vous pourrez partir en retraite à %s, avec un taux de type %s, et une pension de l'ordre de %f", conditionsDepart.Age.AgeEnAnneesMois(), conditionsDepart.Taux, conditionsDepart.Pension)
+	//log.Printf("il vous restera donc %d trimestres à cotiser pour atteindre les %d trimestres le %s", conditionsDepart.TrimestresRestants, conditionsDepart.TrimestresCotisés, TimeToString(conditionsDepart.Date))
+
 }

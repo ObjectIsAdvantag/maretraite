@@ -3,13 +3,11 @@
 
 // Regroupe les utilitaires concernant la décôte
 // voir retraite_personnelle_pourcentage_minoration_applique_taux_plein_bar
-package pension
+package depart
 
 import (
 	"time"
-
 	"fmt"
-	"github.com/ObjectIsAdvantag/maretraite/depart"
 )
 
 var ErrTrimestresManquantsHorsLimites = fmt.Errorf("Les trimestres manquants doivent se situer entre 0 et 20")
@@ -41,8 +39,8 @@ var Default TauxDecote // référentiel post 1952
 func init() {
 	// Initialisation du référentiel de decôtes par défaut
 	Default.Nom = "né après 1952"
-	Default.Depuis, _ = depart.StringToTime("01/01/1953")
-	Default.Jusque, _ = depart.StringToTime(fmt.Sprintf("01/01/%d", depart.ANNEE_MAX))
+	Default.Depuis, _ = StringToTime("01/01/1953")
+	Default.Jusque, _ = StringToTime(fmt.Sprintf("01/01/%d", ANNEE_MAX))
 
 	// Extrait de http://www.legislation.cnav.fr/Pages/bareme.aspx?Nom=retraite_personnelle_pourcentage_minoration_applique_taux_plein_bar#toc0
 	Default.Minoration = 1.25
@@ -79,7 +77,18 @@ func init() {
 // Si la date de naissance n'est pas précisée, le référentiel après 1952 s'applique
 // Si le nombre de trimestres est inférieure à 1, une valeur de 0 trimestres est retournée
 // Si le nombre de trimestres est supérieure à 20, une valeur pour 20 trimestres est retournée
-func DécotePourTrimestresManquants(trimestres int, dateNaissance string) (calcul CalculDecote) {
+func CalculerDécotePourTrimestresManquants(trimestres int, naissanceJJMMAAAA string) (CalculDecote, error) {
+	naissance, err := parseDateNaissance(naissanceJJMMAAAA)
+	if err != nil {
+		return CalculDecote{}, fmt.Errorf("Impossible de calculer la décôte, la date de naissance %s n'est incorrecte, err: %v", naissanceJJMMAAAA, err)
+	}
+
+	return calculerDécotePourTrimestresManquantsInternal(trimestres, naissance), nil
+}
+
+func calculerDécotePourTrimestresManquantsInternal(trimestres int, naissance time.Time) (calcul CalculDecote) {
+
+
 	// TODO Prendre en compte l'année de naissance,
 	// A ce stade, on considère que l'année de naissance est toujours post 1952
 	calcul.Decote = &Default
