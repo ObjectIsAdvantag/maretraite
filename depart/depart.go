@@ -159,7 +159,13 @@ func parseDateNaissance(dateJJMMAAA string) (time.Time, error) {
 }
 
 
+type departImpossibleCode string
+const (
+	TROP_TOT departImpossibleCode = "Trop tôt"
+	TRIMESTRES_INSUFFISANTS departImpossibleCode = "Trimestres insuffisants"
+)
 type DepartImpossible struct {
+	Code  departImpossibleCode
 	Motif string
 }
 
@@ -194,8 +200,8 @@ func calculerConditionsDepartInternal(dateNaissance time.Time, trimestresAcquis 
 
 	// A-t-on atteint l'age de départ en retraite
 	if dateDepart.Before(infosDepart.DateDépartMin) {
-		motif := fmt.Sprintf("Vous n'avez pas atteint %s, l'âge légal de départ en retraite pour votre année de naissance", infosDepart.AgeDépartMin.AgeEnAnnees())
-		return CalculDépart{}, DepartImpossible{Motif:motif}, nil
+		motif := fmt.Sprintf("Vous n'avez pas atteint %s, l'âge légal de départ en retraite pour votre année de naissance, et ce quel que soit le nombre de trimestre cotisés", infosDepart.AgeDépartMin.AgeEnAnneesMois())
+		return CalculDépart{}, DepartImpossible{Code:TROP_TOT, Motif:motif}, nil
 	}
 
 	// A-t-on cotisé suffisamment de trimestre
@@ -208,14 +214,13 @@ func calculerConditionsDepartInternal(dateNaissance time.Time, trimestresAcquis 
 		return CalculDépart{}, DepartImpossible{}, err
 	}
 	totalTrimestres := trimestresAcquis + trimestresComplementaires
-
 	if totalTrimestres < infosDepart.TrimestresMinimum {
-		motif := fmt.Sprintf("Vous n'aurez pas cotisé suffisamment de trimestres le %s, %d trimestres requis contre %d trimestres cotisés si vous n'avez pas d'interruption d'activité", TimeToString(dateDepart),  infosDepart.TrimestresMinimum, totalTrimestres)
-		return CalculDépart{}, DepartImpossible{Motif:motif}, nil
+		motif := fmt.Sprintf("Vous n'aurez pas cotisé suffisamment de trimestres, %d trimestres requis contre %d trimestres cotisés le %s si vous n'avez pas d'interruption d'activité", infosDepart.TrimestresMinimum, totalTrimestres, TimeToString(dateDepart))
+		return CalculDépart{}, DepartImpossible{Code:TRIMESTRES_INSUFFISANTS, Motif:motif}, nil
 	}
 
 	// Calcul des conditions de départ
-	// TODO + Vérifier qu'il y a bien un nb mini de trimestres à cotiser
+
 
 	return CalculDépart{}, DepartImpossible{}, nil
 

@@ -35,15 +35,15 @@ func (amj AnneesMoisJours) AgeEnMoisFloat() float32 {
 
 // Retourne la valeur en années
 // exemple : 44,3 ans
-func (amj AnneesMoisJours) AgeEnAnneesVirguleMois() string {
-	return fmt.Sprintf("%.1f", amj.AgeEnAnneesFloat()) + " ans"
+func (amj AnneesMoisJours) AgeEnAnneesVirgule() string {
+	return fmt.Sprintf("%.1f ans", amj.AgeEnAnneesFloat())
 }
 
 
 // Retourne la valeur en années
 // exemple : 44 ans
 func (amj AnneesMoisJours) AgeEnAnnees() string {
-	return string(int(amj.AgeEnAnneesFloat())) + " ans"
+	return fmt.Sprintf("%d ans", int(amj.AgeEnAnneesFloat()))
 }
 
 // Retourne la valeur en années et en mois

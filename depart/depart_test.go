@@ -145,7 +145,11 @@ func TestCalculerDonnesRetraiteTauxPleinPourValérie(t *testing.T) {
 }
 
 func TestCalculerConditionsDepartTropTot(t *testing.T) {
-	_, impossible, err := CalculerConditionsDepart("24/12/1971", 87, 2014, "24/12/2033")
+	dateDepart := "24/12/2032"
+	dateNaissance := "24/12/1971"
+	trimestresRelevé := 87
+	dateRelevé := 2014
+	_, impossible, err := CalculerConditionsDepart(dateNaissance, trimestresRelevé, dateRelevé, dateDepart)
 	if err != nil {
 		t.Errorf("Impossible de calculer les conditions de départ, should not happen")
 		return
@@ -156,5 +160,36 @@ func TestCalculerConditionsDepartTropTot(t *testing.T) {
 		return
 	}
 
-	log.Println("Depart impossible : OK, motif %s", impossible.Motif)
+	if impossible.Code != TROP_TOT {
+		t.Errorf("Raison de départ impossible incorrecte, code attendu %s, vs obtenu %s", TROP_TOT, impossible.Code)
+		return
+	}
+
+	log.Printf("Si vous êtes né le %s, et que vous avez cotisé %d trimestres à fin %d", dateNaissance, trimestresRelevé, dateRelevé)
+	log.Printf("vous ne pourrez pas partir en retraite le %s, motif %s", dateDepart, impossible.Motif)
+}
+
+func TestCalculerConditionsDepartPasAssezDeTrimestres(t *testing.T) {
+	dateDepart := "24/12/2033"
+	dateNaissance := "24/12/1971"
+	trimestresRelevé := 87
+	dateRelevé := 2014
+	log.Printf("Si vous êtes né le %s, et que vous avez cotisé %d trimestres à fin %d", dateNaissance, trimestresRelevé, dateRelevé)
+	_, impossible, err := CalculerConditionsDepart(dateNaissance, trimestresRelevé, dateRelevé, dateDepart)
+	if err != nil {
+		t.Errorf("Impossible de calculer les conditions de départ, should not happen")
+		return
+	}
+
+	if (impossible == DepartImpossible{}) {
+		t.Errorf("Erreur, le départ ne devrait pas être possible")
+		return
+	}
+
+	if impossible.Code != TRIMESTRES_INSUFFISANTS {
+		t.Errorf("Raison de départ impossible incorrecte, code attendu %s, vs obtenu %s", TROP_TOT, impossible.Code)
+		return
+	}
+
+	log.Printf("vous ne pourrez pas partir en retraite le %s, motif %s", dateDepart, impossible.Motif)
 }
