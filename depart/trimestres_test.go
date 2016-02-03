@@ -44,7 +44,7 @@ func TestTrimestresPourValérie(t *testing.T) {
 func TestNombreDeTrimestres(t *testing.T) {
 	depuis, _ := StringToTime("01/01/1994")
 	jusque, _ := StringToTime("01/01/2034")
-	expected := 120
+	expected := 160
 	nombre, err := NombreDeTrimestresEntre(depuis, jusque)
 
 	if err != nil {

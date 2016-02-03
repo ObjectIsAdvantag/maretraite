@@ -84,5 +84,5 @@ func NombreDeTrimestresEntre(depuis time.Time, jusque time.Time) (int, error) {
 		return 0, err
 	}
 
-	return int(delta.AgeEnMoisFloat() / 4), nil
+	return int(delta.AgeEnMoisFloat() / 3), nil
 }
