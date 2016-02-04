@@ -6,12 +6,10 @@ package main
 
 import (
 	"github.com/ObjectIsAdvantag/maretraite/depart"
-	"github.com/ObjectIsAdvantag/maretraite/pension"
-
 )
 
 // The structure used by the template
-type TemplateData struct {
+type TemplateReleveData struct {
 	User            InfosUser
 	Infos			depart.InfosDepartEnRetraite
 	DepartMin      InfosDepartMin
@@ -30,7 +28,7 @@ type InfosDepart struct {
 type InfosDepartMin struct {
 	InfosDepart
 	TrimestresManquants int
-	Decote              pension.CalculDecote
+	Decote              depart.CalculDecote
 }
 
 

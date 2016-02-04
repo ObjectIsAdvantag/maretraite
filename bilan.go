@@ -12,7 +12,6 @@ import (
 	"text/template"
 
 	"github.com/ObjectIsAdvantag/maretraite/depart"
-	"github.com/ObjectIsAdvantag/maretraite/pension"
 	log "github.com/Sirupsen/logrus"
 )
 
@@ -120,8 +119,8 @@ func genererBilanSimple(userData InfosUser, infos depart.InfosDepartEnRetraite) 
 	}).Parse(BilanDateDeNaissance)
 
 	trimestresDecote := 16 // au maximum pension.DECOTE_MAX_TRIMESTRES = 20 trimestres
-	decote := pension.DécotePourTrimestresManquants(trimestresDecote, userData.Naissance)
-	simuDec := Simulation {
+	decote, _ := depart.CalculerDécotePourTrimestresManquants(trimestresDecote, userData.Naissance)
+	simuDecote := Simulation {
 		// la décote est limitée à 20 trimestres
 		Trimestres:infos.TrimestresTauxPlein - trimestresDecote,
 		DeltaTrimestres:trimestresDecote,
@@ -130,19 +129,19 @@ func genererBilanSimple(userData InfosUser, infos depart.InfosDepartEnRetraite) 
 	}
 
 	deltaTrimestres := 8
-	simuSur := Simulation {
+	simuSurcote := Simulation {
 		// la surcote n'est pas limitée
 		Trimestres:infos.TrimestresTauxPlein + deltaTrimestres,
 		DeltaTrimestres:deltaTrimestres,
-		EvolParTrimestre:fmt.Sprintf("%.3f", pension.SurcotePourTrimestreSupplementaire()),
-		TauxPension:50.0 + float32(deltaTrimestres) * pension.SurcotePourTrimestreSupplementaire(),
+		EvolParTrimestre:fmt.Sprintf("%.3f", depart.SurcotePourTrimestreSupplementaire()),
+		TauxPension:depart.CalculerSurcotePourTrimestresSupplementaires(deltaTrimestres),
 	}
 
 	data := TemplateSimpleData{
 		User:userData,
 		Infos:infos,
-		SimuDecote:simuDec,
-		SimuSurcote:simuSur,
+		SimuDecote:simuDecote,
+		SimuSurcote:simuSurcote,
 	}
 
 	if err := t.Execute(os.Stdout, data); err != nil {
@@ -167,29 +166,24 @@ func genererBilanComplet(userData InfosUser, infos depart.InfosDepartEnRetraite)
 	log.Debugln("genererBilanComplet : ok !")
 }
 
-func preparerDonneesPourTemplate(user InfosUser, dep depart.InfosDepartEnRetraite, tauxPlein depart.CalculDépart) (TemplateData, error) {
+func preparerDonneesPourTemplate(user InfosUser, dep depart.InfosDepartEnRetraite, tauxPlein depart.CalculDépart) (TemplateReleveData, error) {
 
 	dateRelevé, err := depart.VérifierRelevé(user.AnnéeRelevé)
 	if err != nil {
 		log.Debugf("Impossible de calculer le nombre de trimestres cotisés, à cause de la date du relevé: %v, err: %v", user.AnnéeRelevé, err)
-		return TemplateData{}, fmt.Errorf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
+		return TemplateReleveData{}, fmt.Errorf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
 	}
 
 	nbTrimestresRestants, err := depart.NombreDeTrimestresEntre(dateRelevé, dep.DateDépartMin)
 	if err != nil {
 		log.Debugf("Impossible de calculer le nombre de trimestres cotisés, à cause de la date du relevé: %v, err: %v", user.AnnéeRelevé, err)
-		return TemplateData{}, fmt.Errorf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
+		return TemplateReleveData{}, fmt.Errorf("Impossible de calculer le nombre de trimestres cotisés, err: %v", err)
 	}
 
 	departMinTrimestresCotises := nbTrimestresRestants + user.TrimestresCotisés
 	departMinTrimestresManquants := dep.TrimestresTauxPlein - departMinTrimestresCotises
 
-	calcul := pension.DécotePourTrimestresManquants(departMinTrimestresManquants, user.Naissance)
-
-	//MontantCote: fmt.Sprintf("%.3f%%", minMontantDecote),
-
-	//Valeur: fmt.Sprintf("%.3f%%", pension.Default.Diminution),
-
+	calcul, _ := depart.CalculerDécotePourTrimestresManquants(departMinTrimestresManquants, user.Naissance)
 	min := InfosDepartMin{
 		InfosDepart: InfosDepart{
 			DateDépart:        depart.TimeToString(dep.DateDépartMin),
@@ -200,23 +194,7 @@ func preparerDonneesPourTemplate(user InfosUser, dep depart.InfosDepartEnRetrait
 		Decote:              calcul,
 	}
 
-	/*
-		std := CoeffRetraite {
-			Type: "taux plein",
-			Période: "aucune",
-			Valeur: "0%",
-		}
-
-		plein := InfosDepart{
-			DateDépart: depart.TimeToString(tauxPlein.Date),
-			AgeDépart: tauxPlein.Age,
-			TrimestresCotisés: tauxPlein.TrimestresCotisés,
-			TrimestresManquants: tauxPlein.TrimestresRestants,
-			Cote: std,
-		}
-	*/
-
-	return TemplateData{
+	return TemplateReleveData{
 		User:      user,
 		Infos:     dep,
 		DepartMin: min,
