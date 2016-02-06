@@ -13,4 +13,7 @@ dist/
 
 # sensitive data
 *.private
+
+# misc
 start-docker.sh
+*.pdf

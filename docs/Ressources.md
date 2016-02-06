@@ -7,6 +7,11 @@
 - ma retraite en clair : [documentation et calculateur](http://www.la-retraite-en-clair.fr/cid3190637/comment-calculer-pension-retraite.html) 
 - l'agirc-arcco : documentation et calculateurs sur le [site](http://www.agirc-arrco.fr/), il est possible de se créer un compte depuis le site de l'assurance retraite puis d'accéder aux [services Agirc-arrco](https://services.agirc-arrco.fr) 
 
+## Documents
+
+- dépliant accueil : [pdf](http://www.info-retraite.fr/sites/default/files/ca2015-depliant-hd.pdf)
+- ma retraite mode d'emploi : [pdf](http://www.info-retraite.fr/sites/default/files/Guide_MRME_mai2015_web.pdf)
+- comprendre votre retraite : [pdf](https://www.lassuranceretraite.fr/portail-info/files/live/sites/pub-bootstrap/files/Guides%20et%20formulaires/imprime-ris.pdf)
 
 ## Repos Github
 

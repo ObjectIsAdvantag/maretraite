@@ -108,8 +108,9 @@ Questions/Compétences
    - ? une retraite à taux plein correspond globalement à une pension de l'ordre de 50% de vos 25 meilleures années de revenus
    - ? une retraite à taux plein s'obtient en ayant cumulé un nombre de trimestres légal et fonction de votre année de naissance
 
-- ? Comment obtenir mon relevé d'infomations
-   - des relevés de situation vous sont transmis automatiquement tous les 5 ans à partir de vos 40 ans
-   - vous pouvez aussi générer votre relevé après avoir créé un compte sur le site XXXXXX
-   - à partir de 55 ans, il est aussi possible de prendre rendez-vous lien XXXX
+- ? Comment obtenir des infomations
+   - à partir de vos 35 ans, des relevés de situation vous sont transmis automatiquement tous les 5 ans. Ces relevés récapitulent l'ensemble de vos droits à la retraite, organisme par organisme. Ils sont mis à jour tous les ans.
+   - à partir de 55 ans, ces relevés sont complétés d'une estimation indicative globale de votre future retraite.
+   - vous pouvez par ailleurs télécharger, à tout moment, un relevé de situation après avoir créé un compte sur le site XXXXXX
+   - enfin, à partir de 45 ans, vous pouvez demander un entretien d'information gratuit auprès de votre caisse de retraite de base et/ou auprès d’un CICAS (0820 200 189) ou de votre organisme de retraite complémentaire. Vous obtiendrez une information générale et individualisée ainsi qu’une simulation du montant de votre future retraite.
 `

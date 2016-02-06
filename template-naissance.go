@@ -27,11 +27,21 @@ type Simulation struct {
 var BilanDateDeNaissance = `
 Votre bilan retraite simplifié suite à la réforme de 2010 :
 
+- votre future retraite est composée de :
+   - votre retraite de base
+      - concerne vos revenus inférieurs au plafond de 3 170 euros en 2015,
+      - le montant de votre retraite de base est un pourcentage de vos 25 meilleures années de revenus,
+      - ce pourcentage dépend du nombre de trimestres pour lesquels vous avez cotisés
+   - plus vos retraites complémentaires AGIRC / ARRCO
+      - pour vos revenus au delà du plafond de 3 170 euros,
+      - le montant de vos retraites complémentaires se calcule à partir des points AGIRC / ARRCO que vous avez cumulé.
+
 - vous devez cotiser {{ .Infos.TrimestresTauxPlein }} trimestres pour toucher une retraite à taux plein
-   - une retraite à taux plein correspond à une pension de l'ordre de 50% de vos 25 meilleurs années.
+   - une retraite à taux plein correspond à une pension de l'ordre de 50% de vos 25 meilleurs années *
+   - * dans la limite du plafond de 3 170 euros en 2015.
 
 - vous pourrez partir en retraite au plus tôt à {{ .Infos.AgeDépartMin.AgeEnAnneesMois }} (après le {{ .Infos.DateDépartMin | timeToString }})
-   - et si vous avez cotisé au moins {{ .SimuDecote.Trimestres }} trimestres
+   - et si vous avez cotisé au moins {{ .Infos.TrimestresMinimum }} trimestres
    - sans quoi vous devrez repousser votre demande de départ en retraite
 
    - principe de la décote :
@@ -48,7 +58,7 @@ Votre bilan retraite simplifié suite à la réforme de 2010 :
 
 - à partir de {{ .Infos.AgeTauxPleinAuto.AgeEnAnneesMois }} (après le {{ .Infos.DateTauxPleinAuto | timeToString }}), vous pourrez automatiquement bénéficier d'une retraite à taux plein,
    - et ce, quelque soit votre nombre de trimestres cotisés,
-   - car vous aurez atteint l'âge légal pour votre année de naissance.
+   - car vous aurez atteint l'âge légal du droit à taux plein pour votre année de naissance.
 
 - au delà de {{ .Infos.AgeDépartExigible.AgeEnAnneesMois }} (après le {{ .Infos.DateDépartExigible | timeToString }}), si vous n'êtes toujours pas en retraite,
    - votre employeur sera en droit de vous obliger à partir en retraite.

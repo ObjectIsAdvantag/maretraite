@@ -17,9 +17,9 @@ import (
 )
 
 // La structure InfosDepartLegal regroupe les données légales relatives au départ à la retraite.
-// Cette structure est calculée à partir d'une date de naissance, voir la fonction CalculerDepartLegal
+// Cette structure est calculée à partir d'une date de naissance, voir la fonction CalculerInfosLégales
 type InfosDepartEnRetraite struct {
-	TrimestresMinimum   int             `json:"nbTrimestresMinimum"`      // nombre de trimestres cotisés au minimum afin de pouvoir partir en retraitei
+	TrimestresMinimum   int             `json:"nbTrimestresMin"`          // nombre de trimestres cotisés au minimum afin de pouvoir partir en retraitei
 	TrimestresTauxPlein int             `json:"nbTrimestresTauxPlein"`    // nombre de trimestres afin de disposer de sa retraite à taux plein
 	AgeDépartMin        AnneesMoisJours `json:"ageDepartMinimum"`         // âge à partir duquel il est possible de percevoir une retraite, mais elle ne sera pas à taux plein si le nombre de trimestres cotisés n'est pas celui requis
 	DateDépartMin       time.Time       `json:"dateDepartMinimum"`        // date à partir de laquelle il est possible de percevoir une retraite

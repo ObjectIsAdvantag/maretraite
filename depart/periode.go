@@ -49,8 +49,15 @@ func init() {
 	refAgeLegal.url = "http://www.la-retraite-en-clair.fr/cid3190611/a-quel-age-peut-partir-la-retraite.html"
 	refAgeLegal.periodes = make(map[time.Time]PeriodeAgeLegal)
 
-	// TODO ajouter les périodes avant 1955
 	refAgeLegal.ajouterPeriode("01/01/1955", "", AnneesMoisJours{62, 0, 0}, AnneesMoisJours{67, 0, 0}, AnneesMoisJours{70, 0, 0})
+	refAgeLegal.ajouterPeriode("01/01/1954", "31/12/1954", AnneesMoisJours{61, 7, 0}, AnneesMoisJours{66, 7, 0}, AnneesMoisJours{70, 0, 0})
+	refAgeLegal.ajouterPeriode("01/01/1953", "31/12/1953", AnneesMoisJours{61, 2, 0}, AnneesMoisJours{66, 2, 0}, AnneesMoisJours{70, 0, 0})
+	refAgeLegal.ajouterPeriode("01/01/1952", "31/12/1952", AnneesMoisJours{60, 9, 0}, AnneesMoisJours{65, 9, 0}, AnneesMoisJours{70, 0, 0})
+
+	// TODO vérifier les droits avant 1952
+	refAgeLegal.ajouterPeriode("", "31/12/1951", AnneesMoisJours{60, 9, 0}, AnneesMoisJours{65, 9, 0}, AnneesMoisJours{70, 0, 0})
+
+
 }
 
 // Ajoute une période au référentiel.
